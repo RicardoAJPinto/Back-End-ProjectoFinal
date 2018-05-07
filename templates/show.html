@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title>Show db</title>
+    </head>
+    <body>
+        {% for user in user %}
+            <div><p>{{ user.id }} , {{ user.email }}</p></div>
+        {% endfor %}
+        <form method="POST" action="/delete">
+            <label> Id: </label>
+            <input id="id" name ="id" type="text" />
+            <input type="submit" value="Delete" />
+        </form>
+    </body>
+</html>
