@@ -1,8 +1,5 @@
-@mixin body-font() {
-  font-family: 'Lato';
-}
-
-@mixin heading-font() {
-  font-weight: 700;
-  font-family: 'Montserrat';
+@mixin rotate {
+  -webkit-transform: rotate(15deg);
+  -ms-transform: rotate(15deg);
+  transform: rotate(15deg);
 }

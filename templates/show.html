@@ -4,7 +4,7 @@
     </head>
     <body>
         {% for user in user %}
-            <div><p>{{ user.id }} , {{ user.email }} , {{ user.password }}</p></div>
+            <div><p>{{ user.id }} , {{ user.email }}</p></div>
         {% endfor %}
         <form method="POST" action="/delete">
             <label> Id: </label>

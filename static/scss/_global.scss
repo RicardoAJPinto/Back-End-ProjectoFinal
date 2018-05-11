@@ -1,95 +1,55 @@
-// Typography
-body {
-  @include body-font;
-}
+// Global styling for this template
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  @include heading-font;
-}
-
-// Custom Horizontal Rule with Star Icon
-hr.star-light,
-hr.star-dark {
-  max-width: 15rem;
-  padding: 0;
-  text-align: center;
-  border: none;
-  border-top: solid 0.25rem;
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
-}
-
-hr.star-light:after,
-hr.star-dark:after {
+html {
   position: relative;
-  top: -.8em;
-  display: inline-block;
-  padding: 0 0.25em;
-  content: '\f005';
-  font-family: FontAwesome;
-  font-size: 2em;
+  min-height: 100%;
 }
 
-hr.star-light {
-  border-color: $white;
-}
-hr.star-light:after {
-  color: $white;
-  background-color: $primary;
+body {
+  overflow-x: hidden;
 }
 
-hr.star-dark {
-  border-color: $secondary;
-}
-hr.star-dark:after {
-  color: $secondary;
-  background-color: white;
-}
-
-// Section Padding Settings
-section {
-  padding: 6rem 0;
-  h2 {
-    font-size: 2.25rem;
-    line-height: 2rem;
-  }
-  @media (min-width: 992px) {
-    h2 {
-      font-size: 3rem;
-      line-height: 2.5rem;
-    }
+body.sticky-footer {
+  margin-bottom: $sticky-footer-height;
+  .content-wrapper {
+    min-height: calc(100vh - #{$sticky-footer-height} - #{$navbar-base-height});
   }
 }
 
-// Custom Button Size
-.btn-xl {
-  padding: 1rem 1.75rem;
-  font-size: 1.25rem;
+body.fixed-nav {
+  padding-top: $navbar-base-height;
 }
 
-// Custom Rounded Social Button
-.btn-social {
-  width: 3.25rem;
-  height: 3.25rem;
-  font-size: 1.25rem;
-  line-height: 2rem;
+.content-wrapper {
+  min-height: calc(100vh - #{$sticky-footer-height});
+  padding-top: 1rem;
 }
 
-// Scroll to Top Button
+// Scroll to top button
 .scroll-to-top {
-  z-index: 1042;
-  right: 1rem;
-  bottom: 1rem;
+  position: fixed;
+  right: 15px;
+  bottom: 3px;
+
   display: none;
-  a {
-    width: 3.5rem;
-    height: 3.5rem;
-    background-color: fade-out($gray-900, 0.5);
-    line-height: 3.1rem;
+
+  width: 50px;
+  height: 50px;
+
+  text-align: center;
+
+  color: white;
+  background: fade-out($gray-800, .5);
+
+  line-height: 45px;
+  &:focus,
+  &:hover {
+    color: white;
+  }
+  &:hover {
+    background: $gray-800;
+  }
+  i {
+    font-weight: 800;
   }
 }

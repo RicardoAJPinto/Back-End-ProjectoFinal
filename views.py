@@ -1,12 +1,7 @@
 from app import app
 from model import *
 
-
-##############################################################################
-# Views
-##############################################################################
-
-def token_required(f):  #Está fixe
+def token_required(f):  #Está fixe (TOPPPP)
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -31,6 +26,13 @@ def token_required(f):  #Está fixe
 
     return decorated
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/test')
+def test():
+    return render_template('layouts/layout2.html')
 
 @app.route('/getme', methods=['GET'])
 @token_required
@@ -111,3 +113,7 @@ def login():
 def protected(current_user):
     token = request.headers['x-access-token']
     return jsonify(token), 200
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404

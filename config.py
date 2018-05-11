@@ -6,8 +6,6 @@ app.config['SECURITY_REGISTERABLE'] = True
 #Set the application in debug mode so that the server is reloaded on any code change & helps debug
 app.config['DEBUG'] = True
 
-
-
 app.config['WTF_CSRF_ENABLED'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 #app.config['JWT_COOKIE_SECURE'] = False
