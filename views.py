@@ -1,5 +1,7 @@
 from app import app
 from model import *
+from api import *
+from flask import abort, request
 
 def token_required(f):  #Está fixe (TOPPPP)
     @wraps(f)
@@ -30,6 +32,15 @@ def token_required(f):  #Está fixe (TOPPPP)
 def home():
     return render_template('index.html')
 
+@app.route('/profile')
+@login_required
+def perfil():
+    return render_template('profile.html')
+
+@app.route('/login')
+def change():
+    return render_template('security/login_user.html')
+
 @app.route('/test')
 def test():
     return render_template('layouts/layout2.html')
@@ -41,6 +52,7 @@ def get(current_user):
     user = User.query.filter_by(id=tkn.id)       #Não trabalha como deve ser
     return jsonify({identity})
 
+#Delete user
 @app.route('/user/<email>', methods=['DELETE'])    #Está fixe
 @token_required
 def delete(current_user, email):
@@ -51,6 +63,7 @@ def delete(current_user, email):
     db.session.commit()
     return jsonify({'message' : 'The user has been deleted!'})
 
+#Show data from current user logged
 @app.route('/users', methods=['GET'])   #Está fixe
 @token_required
 def show(current_user):
@@ -79,9 +92,9 @@ def profile(current_user, email):
 
     return jsonify({'user' : user_data})
 
+#Adiciona novo utilizador
 @app.route('/user123', methods=['POST']) #Está fixe
-@token_required
-def create(current_user):
+def create():
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
     user = User(email=data['email'],password=hashed_password)
@@ -114,6 +127,78 @@ def protected(current_user):
     token = request.headers['x-access-token']
     return jsonify(token), 200
 
+# I really need to explain this?
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return make_response(jsonify({'error': 'Not found'}), 404)
+    #return render_template('404.html'), 404
+
+######################### API #########################
+# Get all the scans
+@app.route('/api/scans', methods=['GET'])
+def get_scans():
+    return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
+
+# Get the scan passing the ID on the route
+@app.route('/api/scans/<int:scan_id>', methods=['GET'])
+def get_scanid(scan_id):
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
+        abort(404)
+    return jsonify({'scan': scan[0]})
+
+# Post a new scan to the API
+@app.route('/api/scans', methods=['POST'])
+def post_scan():
+    if not request.json or not 'system' or not 'version' in request.json:
+        abort(400)
+    new_scan = {
+        'id': DetectOS[-1]['id'] + 1,  
+        'machine': request.json.get('machine', ""),
+        'node': request.json.get('node', ""),
+        'processor': request.json.get('processor', "" ),
+        'release': request.json.get('release', ""),
+        'system': request.json['system'],
+        'version': request.json['version']
+    }
+    DetectOS.append(new_scan)
+    return jsonify({'Scan_added': new_scan}), 201
+
+# Update a parameter passing the id on the route
+@app.route('/api/scans/<int:scan_id>', methods=['PUT'])
+def update_scan(scan_id):
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
+        abort(404)
+    if not request.json:
+        abort(400)
+    if 'machine' in request.json and type(request.json['machine']) != str:
+        abort(400)
+    if 'node' in request.json and type(request.json['node']) != str:
+        abort(400)
+    if 'processor' in request.json and type(request.json['processor']) !=str:
+        abort(400)
+    if 'release' in request.json and type(request.json['release']) != str:
+        abort(400)
+    if 'system' in request.json and type(request.json['system']) != str:
+        abort(400)
+    if 'version' in request.json and type(request.json['version']) != str:
+        abort(400)
+
+    scan[0]['machine'] = request.json.get('machine', scan[0]['machine'])
+    scan[0]['node'] = request.json.get('node', scan[0]['node'])
+    scan[0]['processor'] = request.json.get('processor', scan[0]['processor'])
+    scan[0]['release'] = request.json.get('release', scan[0]['release'])
+    scan[0]['system'] = request.json.get('system', scan[0]['system'])
+    scan[0]['version'] = request.json.get('version', scan[0]['version'])
+    return jsonify({'Updated_scan': scan[0]})
+
+
+@app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
+def delete_scan(scan_id):
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
+        abort(404)
+    DetectOS.remove(scan[0])
+    return jsonify({'result': True})
+
