@@ -32,3 +32,4 @@ def make_public_DetectOS(scan):
         else:
             new_scan[field] = scan[field]
     return new_scan
+

@@ -40,6 +40,12 @@ class Maquina(db.Model, UserMixin):
     roles = db.relationship('Historico', secondary=historico_Maquina,
                             backref=db.backref('maqHist', lazy='dynamic'))
 
+
+class Result(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('maquina.id'))
+    dataos = db.Column(JSONType)
+
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
