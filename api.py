@@ -47,17 +47,35 @@ def require_appkey(view_function):
 ######################### API views ###################################
 # Get all the scans
 @app.route('/api/scans', methods=['GET'])
-@require_appkey
 def get_scans():
-    return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
+
+    result = Result.query.all() 
+    output = []
+    for result in result:
+        out = {}
+        out['id'] = result.id
+        out['dataos'] = result.dataos
+        output.append(out)
+
+    return jsonify({'Results' : output})
+    #return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
+
 
 # Get the scan passing the ID on the route
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    return jsonify({'scan': scan[0]})
+    scan = Result.query.filter_by(id=scan_id).first()
+    if not scan:
+        return jsonify({'message' : 'No scan found!'})
+    out = {}
+    out['id'] = result.id
+    out['dataos'] = result.dataos
+    return jsonify({'Output' : out})
+
+    # scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    # if len(scan) == 0:
+    #     abort(404)
+    # return jsonify({'scan': scan[0]})
 
 # Post a new scan to the API
 @app.route('/api/scans', methods=['POST'])
@@ -74,13 +92,18 @@ def post_scan():
         'version': request.json['version']
     }
     DetectOS.append(new_scan)
+    result = Result(owner_id = 1)
+    result.dataos = new_scan
+    db.session.add(result) 
+    db.session.commit()
     return jsonify({'Scan_added': new_scan}), 201
 
 # Update a parameter passing the id on the route
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
 def update_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
+    #scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    scan = Result.query.filter_by(id=scan_id).first()
+    if not scan:
         abort(404)
     if not request.json:
         abort(400)
@@ -88,7 +111,7 @@ def update_scan(scan_id):
         abort(400)
     if 'node' in request.json and type(request.json['node']) != str:
         abort(400)
-    if 'processor' in request.json and type(request.json['processor']) !=str:
+    if 'processor' in request.json and type(request.json['processor']) != str:
         abort(400)
     if 'release' in request.json and type(request.json['release']) != str:
         abort(400)
@@ -97,23 +120,27 @@ def update_scan(scan_id):
     if 'version' in request.json and type(request.json['version']) != str:
         abort(400)
 
-    scan[0]['machine'] = request.json.get('machine', scan[0]['machine'])
-    scan[0]['node'] = request.json.get('node', scan[0]['node'])
-    scan[0]['processor'] = request.json.get('processor', scan[0]['processor'])
-    scan[0]['release'] = request.json.get('release', scan[0]['release'])
-    scan[0]['system'] = request.json.get('system', scan[0]['system'])
-    scan[0]['version'] = request.json.get('version', scan[0]['version'])
-    return jsonify({'Updated_scan': scan[0]})
+    scan.dataos['machine'] = request.json.get('machine', scan.dataos['machine']) 
+    scan.dataos['node'] = request.json.get('node', scan.dataos['node']) 
+    scan.dataos['processor'] = request.json.get('processor', scan.dataos['processor']) 
+    scan.dataos['release'] = request.json.get('release', scan.dataos['release']) 
+    scan.dataos['system'] = request.json.get('system', scan.dataos['system']) 
+    scan.dataos['version'] = request.json.get('version', scan.dataos['version']) 
+
+
+    scan.dataos['machine'][ request.json.get('machine')]
+    db.session.commit()
+    return jsonify({'Scan_added': scan.id}), 201
 
 
 @app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
 def delete_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    DetectOS.remove(scan[0])
+    scan = Result.query.filter_by(id=scan_id).first()
+    if not scan:
+        return jsonify({'message' : 'No machine found!'})
+    db.session.delete(scan)
+    db.session.commit()
     return jsonify({'result': True})
-
 
 def make_public_DetectOS(scan):
     new_scan = {}
