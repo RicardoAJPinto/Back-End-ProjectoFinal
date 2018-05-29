@@ -6,11 +6,11 @@ import json
 import requests 
 
 payload = {}
-if linux_distribution()[1] != "":
-  payload["Public Release:"] = linux_distribution()[1]
+if linux_distribution()[1] == ' ':
+	payload["Public Release:"] = linux_distribution()[1]
 for i in range(0, len(uname())):
   payload[uname()._fields[i]] = uname()[i]
-
-url = 'http://127.0.0.1:5000/api/scans'
-requestpost = requests.post(url , json=payload)
-print(requestpost)
+print(payload)
+# url = 'http://127.0.0.1:5000/api/scans'
+# requestpost = requests.post(url , json=payload)
+# print(requestpost)

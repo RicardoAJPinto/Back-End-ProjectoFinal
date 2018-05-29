@@ -1,10 +1,11 @@
 from app import app
 from model import *
+from flask import abort, request, send_file, send_from_directory
 from api import *
-from flask import abort, request
+from flask_security import roles_required
 
-##########################      Validação Token         ##############
-
+##########################   Decorators   ##########################   
+# Decorator to validate token
 def token_required(f):  
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -22,10 +23,17 @@ def token_required(f):
 
     return decorated
 
-##############################################################################
+#######################################################################
+
 @app.route('/')
+# @roles_required('Admin')
 def home():
     return render_template('index.html')
+
+# @app.route('/administrator')
+# @login_required
+# def admin():
+#     return render_template('admin/index.html')
 
 @app.route('/profile')
 @login_required
@@ -37,8 +45,14 @@ def change():
     return render_template('security/login_user.html')
 
 @app.route('/test')
+@login_required
 def test():
     return render_template('layouts/layout2.html')
+
+# Download file(it will not work if you will run zeus.py)
+@app.route('/return-file/')
+def return_file():
+    return send_from_directory('agent', 'zeus.py', as_attachment=True)
 
 @app.route('/getme', methods=['GET'])
 @token_required
@@ -46,6 +60,13 @@ def get(current_user):
     tkn = request.headers['x-access-token']
     user = User.query.filter_by(id=tkn.id)       #Não trabalha como deve ser
     return jsonify({identity})
+
+###########################  Error 404 ############################>##
+# I really need to explain this?
+@app.errorhandler(404)
+def page_not_found(e):
+    #return make_response(jsonify({'error': 'Not found'}), 404)
+    return render_template('404.html'), 404
 
 ###############################         Delete User     #####################
 @app.route('/user/<email>', methods=['DELETE'])    #Está fixe
@@ -114,7 +135,9 @@ def login():
 
         return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not 3', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})   
+    return make_response('Could not 3', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+
 
 ################################    Test Token          ################################>
 @app.route('/protected', methods=['GET']) #Está fixe
@@ -123,13 +146,6 @@ def protected(current_user):
     token = request.headers['x-access-token']
     return jsonify(token), 200
 
-
-###########################  Error 404 ############################>##
-# I really need to explain this?
-@app.errorhandler(404)
-def page_not_found(e):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-    #return render_template('404.html'), 404
 
 ###########################           Histórico           #########################################
 
@@ -212,73 +228,3 @@ def addRole():
     user.roles.append(role)
     db.session.commit()
     return jsonify({'message' : 'Role added to user!'})
-
-######################### API #########################
-# Get all the scans
-@app.route('/api/scans', methods=['GET'])
-def get_scans():
-    return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
-
-# Get the scan passing the ID on the route
-@app.route('/api/scans/<int:scan_id>', methods=['GET'])
-def get_scanid(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    return jsonify({'scan': scan[0]})
-
-# Post a new scan to the API
-@app.route('/api/scans', methods=['POST'])
-def post_scan():
-    if not request.json or not 'system' or not 'version' in request.json:
-        abort(400)
-    new_scan = {
-        'id': DetectOS[-1]['id'] + 1,  
-        'machine': request.json.get('machine', ""),
-        'node': request.json.get('node', ""),
-        'processor': request.json.get('processor', "" ),
-        'release': request.json.get('release', ""),
-        'system': request.json['system'],
-        'version': request.json['version']
-    }
-    DetectOS.append(new_scan)
-    return jsonify({'Scan_added': new_scan}), 201
-
-# Update a parameter passing the id on the route
-@app.route('/api/scans/<int:scan_id>', methods=['PUT'])
-def update_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    if not request.json:
-        abort(400)
-    if 'machine' in request.json and type(request.json['machine']) != str:
-        abort(400)
-    if 'node' in request.json and type(request.json['node']) != str:
-        abort(400)
-    if 'processor' in request.json and type(request.json['processor']) !=str:
-        abort(400)
-    if 'release' in request.json and type(request.json['release']) != str:
-        abort(400)
-    if 'system' in request.json and type(request.json['system']) != str:
-        abort(400)
-    if 'version' in request.json and type(request.json['version']) != str:
-        abort(400)
-
-    scan[0]['machine'] = request.json.get('machine', scan[0]['machine'])
-    scan[0]['node'] = request.json.get('node', scan[0]['node'])
-    scan[0]['processor'] = request.json.get('processor', scan[0]['processor'])
-    scan[0]['release'] = request.json.get('release', scan[0]['release'])
-    scan[0]['system'] = request.json.get('system', scan[0]['system'])
-    scan[0]['version'] = request.json.get('version', scan[0]['version'])
-    return jsonify({'Updated_scan': scan[0]})
-
-
-@app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
-def delete_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    DetectOS.remove(scan[0])
-    return jsonify({'result': True})
-

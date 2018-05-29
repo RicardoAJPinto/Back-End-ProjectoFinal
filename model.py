@@ -1,6 +1,7 @@
 from app import *
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
-# Define models
+
+##########################   User && Roles DB   ##########################
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
@@ -21,8 +22,11 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('userRole', lazy='dynamic'))
 
+    # Flask-Login integration
+    def is_authenticated(self):
+        return True
 
-
+##########################  xxxxx   ##########################
 historico_Maquina = db.Table('historico_Maquina',
         db.Column('maquina_id', db.Integer(), db.ForeignKey('maquina.id')),
         db.Column('hist_id', db.Integer(), db.ForeignKey('historico.id')))
