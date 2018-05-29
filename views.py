@@ -1,10 +1,11 @@
 from app import app
 from model import *
+from flask import abort, request, send_file, send_from_directory
 from api import *
-from flask import abort, request
+from flask_security import roles_required
 
-##########################      Validação Token         ##############
-
+##########################   Decorators   ##########################   
+# Decorator to validate token
 def token_required(f):  
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -22,10 +23,17 @@ def token_required(f):
 
     return decorated
 
-##############################################################################
+#######################################################################
+
 @app.route('/')
+# @roles_required('Admin')
 def home():
     return render_template('index.html')
+
+# @app.route('/administrator')
+# @login_required
+# def admin():
+#     return render_template('admin/index.html')
 
 @app.route('/profile')
 @login_required
@@ -37,10 +45,14 @@ def change():
     return render_template('security/login_user.html')
 
 @app.route('/test')
+@login_required
 def test():
     return render_template('layouts/layout2.html')
 
-#########################       Get UserID from Token
+# Download file(it will not work if you will run zeus.py)
+@app.route('/return-file/')
+def return_file():
+    return send_from_directory('agent', 'zeus.py', as_attachment=True)
 
 @app.route('/getme', methods=['GET'])
 @token_required
@@ -52,6 +64,13 @@ def get(current_user):
     except:
         return jsonify({'message' : 'Token is 123!'}), 401     
     return jsonify({'user' : userr.id})
+
+###########################  Error 404 ############################>##
+# I really need to explain this?
+@app.errorhandler(404)
+def page_not_found(e):
+    #return make_response(jsonify({'error': 'Not found'}), 404)
+    return render_template('404.html'), 404
 
 ###############################         Delete User     #####################
 @app.route('/user/<email>', methods=['DELETE'])    #Está fixe
@@ -120,7 +139,9 @@ def login():
 
         return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not 3', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})   
+    return make_response('Could not 3', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+
 
 ################################    Test Token          ################################>
 @app.route('/protected', methods=['GET']) #Está fixe
@@ -129,13 +150,6 @@ def protected(current_user):
     token = request.headers['x-access-token']
     return jsonify(token), 200
 
-
-###########################  Error 404 ############################>##
-# I really need to explain this?
-@app.errorhandler(404)
-def page_not_found(e):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-    #return render_template('404.html'), 404
 
 ###########################           Histórico           #########################################
 
