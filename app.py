@@ -1,6 +1,6 @@
 import os
 import sys
-import jwt
+#import jwt
 import datetime
 import json
 from flask_wtf import CsrfProtect
