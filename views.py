@@ -81,7 +81,7 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 ###############################         Delete User     #####################
-@app.route('/user/<email>', methods=['DELETE'])    #Está fixe
+@app.route('/user/<email>', methods=['DELETE'])    #Est fixe
 @token_required
 def delete(current_user, email):
     userdel = User.query.filter_by(email=email).first()
@@ -92,7 +92,7 @@ def delete(current_user, email):
     return jsonify({'message' : 'The user has been deleted!'})
 
 ####################################        Profile / All user
-@app.route('/users', methods=['GET'])   #Está fixe
+@app.route('/users', methods=['GET'])   #Est fixe
 @token_required
 def show(current_user):
     user = User.query.all() 
@@ -106,7 +106,7 @@ def show(current_user):
 
     return jsonify({'users' : output})
     
-@app.route('/profile/<email>')      #Está fixe
+@app.route('/profile/<email>')      #Est fixe
 @token_required
 def profile(current_user, email):
     user = User.query.filter_by(email=email).first()
@@ -121,7 +121,7 @@ def profile(current_user, email):
     return jsonify({'user' : user_data})
 
 ##############################          Registo / Auth
-@app.route('/user123', methods=['POST']) #Está fixe
+@app.route('/user123', methods=['POST']) #Est fixe
 def create():
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
@@ -131,7 +131,7 @@ def create():
     return jsonify({'message' : 'New user created!'})
 
 
-@app.route('/login123')  #Está fixe
+@app.route('/login123')  #Est fixe
 def login():
     auth = request.authorization
     if not auth or not auth.username or not auth.password:
@@ -152,14 +152,14 @@ def login():
 
 
 ################################    Test Token          ################################>
-@app.route('/protected', methods=['GET']) #Está fixe
+@app.route('/protected', methods=['GET']) #Est fixe
 @token_required
 def protected(current_user):
     token = request.headers['x-access-token']
     return jsonify(token), 200
 
 
-###########################           Histórico           #########################################
+###########################           Histrico           #########################################
 
 @app.route('/hist', methods=['POST'])
 def createhist():
@@ -170,7 +170,7 @@ def createhist():
     return jsonify({'message' : 'New hist created!'})
 
 
-#########################           Máquina             ###########################################
+#########################           Mquina             ###########################################
 
 
 @app.route('/machine', methods=['POST']) 
