@@ -11,7 +11,7 @@ from flask_security import SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from flask_login import LoginManager    
+from flask_login import LoginManager, current_user    
 
 from flask_admin import Admin ,BaseView, expose
 from flask_admin.base import Admin, AdminIndexView, BaseView, MenuLink, expose
@@ -22,15 +22,11 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')     
 
 s = URLSafeTimedSerializer('Thisisasecret!')
-
+login = LoginManager(app)
 # Create database connection object
 db = SQLAlchemy(app)
 
-# # Create customized model view class
-# class MyModelView(sqla.ModelView):
 
-#     def is_accessible(self):
-#         return login.current_user.is_authenticated()
 
 # class MyAdminIndexView(admin.AdminIndexView):
     
@@ -40,7 +36,15 @@ db = SQLAlchemy(app)
 #             return redirect(url_for('.login_view'))
 #         return super(MyAdminIndexView, self).index()
 # ,  index_view=MyAdminIndexView()
-admin = Admin(app)
+@login.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return  current_user.is_authenticated and current_user.has_role('admin')
+
+admin = Admin(app, index_view=MyAdminIndexView())
 
 from AdminPage import *
 

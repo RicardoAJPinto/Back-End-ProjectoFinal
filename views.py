@@ -50,9 +50,17 @@ def test():
     return render_template('layouts/layout2.html')
 
 # Download file(it will not work if you will run zeus.py)
-@app.route('/return-file/')
+@app.route('/return-file/', methods=['POST'])
 def return_file():
-    return send_from_directory('agent', 'zeus.py', as_attachment=True)
+    user_id='4'.encode('utf8')
+    with open('pubkey.pem', mode='rb') as pubfile:
+        keydata = pubfile.read()
+        pub_key = rsa.PublicKey.load_pkcs1(keydata)
+    encrypted = rsa.encrypt(user_id, pub_key)
+    user_64 = base64.b64encode(encrypted)
+    with open('agent/api.pem', mode='wb') as pubfile:
+        pubfile.write(user_64)
+    return jsonify({'result':True})#send_from_directory('agent', 'zeus.py', as_attachment=True)
 
 @app.route('/getme', methods=['GET'])
 @token_required
@@ -165,10 +173,10 @@ def createhist():
 #########################           Máquina             ###########################################
 
 
-@app.route('/maquina', methods=['POST']) 
-def createmaquina():
+@app.route('/machine', methods=['POST']) 
+def createmachine():
     data = request.get_json()
-    hist = Maquina(owner_id=data['owner'], maquina=data['maquina'])
+    hist = Machine(owner_id=data['owner'], machine_id=data['machine'])
     db.session.add(hist) 
     db.session.commit()  
     return jsonify({'message' : 'New machine created!'})
