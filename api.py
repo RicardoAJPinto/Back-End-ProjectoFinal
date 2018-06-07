@@ -103,27 +103,23 @@ def update_scan(scan_id):
     if 'version' in request.json and type(request.json['version']) != str:
         abort(400)
 
-    scan.dataos['machine'] = request.json.get('machine', scan.dataos['machine']) 
-    scan.dataos['node'] = request.json.get('node', scan.dataos['node']) 
-    scan.dataos['processor'] = request.json.get('processor', scan.dataos['processor']) 
-    scan.dataos['release'] = request.json.get('release', scan.dataos['release']) 
-    scan.dataos['system'] = request.json.get('system', scan.dataos['system']) 
-    scan.dataos['version'] = request.json.get('version', scan.dataos['version']) 
-
-
-    scan.dataos['machine'][ request.json.get('machine')]
-    db.session.commit()
-    return jsonify({'Scan_added': scan.id}), 201
+    scan[0]['machine'] = request.json.get('machine', scan[0]['machine'])
+    scan[0]['node'] = request.json.get('node', scan[0]['node'])
+    scan[0]['processor'] = request.json.get('processor', scan[0]['processor'])
+    scan[0]['release'] = request.json.get('release', scan[0]['release'])
+    scan[0]['system'] = request.json.get('system', scan[0]['system'])
+    scan[0]['version'] = request.json.get('version', scan[0]['version'])
+    return jsonify({'Updated_scan': scan[0]})
 
 
 @app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
 def delete_scan(scan_id):
-    scan = Result.query.filter_by(id=scan_id).first()
-    if not scan:
-        return jsonify({'message' : 'No machine found!'})
-    db.session.delete(scan)
-    db.session.commit()
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
+        abort(404)
+    DetectOS.remove(scan[0])
     return jsonify({'result': True})
+
 
 def make_public_DetectOS(scan):
     new_scan = {}
