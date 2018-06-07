@@ -1,5 +1,13 @@
 from app import *
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
+from flask_dance.consumer.backend.sqla import OAuthConsumerMixin
+import uuid
+from sqlalchemy_utils import UUIDType, JSONType 
+from uuid import uuid4
+import sqlalchemy
+from sqlalchemy.dialects.postgresql import UUID
+
+# CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 ##########################   User && Roles DB   ##########################
 roles_users = db.Table('roles_users',
@@ -17,14 +25,17 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
+    api_key = db.Column(UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
     maquina = db.relationship('Maquina', backref='owner')
     historico = db.relationship('Historico', backref='owner')
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('userRole', lazy='dynamic'))
 
-    # Flask-Login integration
-    def is_authenticated(self):
-        return True
+##########################  OAuth   ##########################
+# OAuthConsumerMixin will generate new parameters to the class
+class OAuth(OAuthConsumerMixin, db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User)
 
 ##########################  xxxxx   ##########################
 historico_Maquina = db.Table('historico_Maquina',

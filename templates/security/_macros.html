@@ -1,17 +1,17 @@
-
-  <p>
-    {% macro render_field_with_errors(field) %}
+{% macro render_field_with_errors(field, placeholder=None) %}
+  <div>
     {{ field.label }} {{ field(**kwargs)|safe }}
+    
     {% if field.errors %}
-      <ul>
+      <div>
       {% for error in field.errors %}
         <li>{{ error }}</li>
       {% endfor %}
-      </ul>
+      </div>
     {% endif %}
-  </p>
+  </div>
 {% endmacro %}
 
 {% macro render_field(field) %}
-  <p>{{ field(**kwargs)|safe }}</p>
+  <div>{{ field(**kwargs)|safe }}</div>
 {% endmacro %}

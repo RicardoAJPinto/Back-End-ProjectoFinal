@@ -5,12 +5,18 @@ import sys
 import json 
 import requests 
 
-payload = {}
-if linux_distribution()[1] == ' ':
-	payload["Public Release:"] = linux_distribution()[1]
-for i in range(0, len(uname())):
-  payload[uname()._fields[i]] = uname()[i]
-print(payload)
-# url = 'http://127.0.0.1:5000/api/scans'
-# requestpost = requests.post(url , json=payload)
-# print(requestpost)
+def OperatingSystem():
+  payload = {}
+  if linux_distribution()[1] == ' ':
+    payload["Public Release:"] = linux_distribution()[1]
+  for i in range(0, len(uname())):
+    payload[uname()._fields[i]] = uname()[i]
+  print(payload)
+
+  from config import headers
+  # Url of the endpoint to post the scans
+  url = 'http://127.0.0.1:5000/api/scans'
+
+  requestpost = requests.post(url , json=payload, headers=headers)
+  print(requestpost)
+

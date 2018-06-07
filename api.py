@@ -2,6 +2,7 @@ from app import *
 from flask_restful import Resource, Api
 from json import dumps
 from flask import jsonify, url_for, abort, request
+from model import User
 
 DetectOS = [
     {
@@ -33,52 +34,39 @@ def require_appkey(view_function):
     @wraps(view_function)
     # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
-        # check in file if the key exists, need to change this
-        with open('api.key', 'r') as apikey:
-            key=apikey.read().replace('\n', '')
-        #if request.args.get('key') and request.args.get('key') == key:
-        if request.headers.get('x-api-key') and request.headers.get('x-api-key') == key:
-            return view_function(*args, **kwargs)
-        else:
-            abort(401)
+        APIkey = None
+        if 'x-api-key' in request.headers:
+            APIkey = request.headers.get('x-api-key')
+        if not APIkey:
+            return jsonify({'message' : 'APIKey is missing!'}), 401
+        print(APIkey)
+        try:
+            key = User.query.filter_by(api_key=APIkey).first()
+            print(key)
+        except:
+            return jsonify({'message' : 'APIKey is invalid!'}), 401
+        return view_function(key, *args, **kwargs)
     return decorated_function
-#######################################################################
 
 ######################### API views ###################################
+# encode - decode -
 # Get all the scans
 @app.route('/api/scans', methods=['GET'])
-def get_scans():
-
-    result = Result.query.all() 
-    output = []
-    for result in result:
-        out = {}
-        out['id'] = result.id
-        out['dataos'] = result.dataos
-        output.append(out)
-
-    return jsonify({'Results' : output})
-    #return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
-
+@require_appkey
+def get_scans(user):
+    return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
 
 # Get the scan passing the ID on the route
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
-    scan = Result.query.filter_by(id=scan_id).first()
-    if not scan:
-        return jsonify({'message' : 'No scan found!'})
-    out = {}
-    out['id'] = result.id
-    out['dataos'] = result.dataos
-    return jsonify({'Output' : out})
-
-    # scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    # if len(scan) == 0:
-    #     abort(404)
-    # return jsonify({'scan': scan[0]})
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
+        abort(404)
+    return jsonify({'scan': scan[0]})
 
 # Post a new scan to the API
 @app.route('/api/scans', methods=['POST'])
+# @require_appkey
 def post_scan():
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)
@@ -92,18 +80,13 @@ def post_scan():
         'version': request.json['version']
     }
     DetectOS.append(new_scan)
-    result = Result(owner_id = 1)
-    result.dataos = new_scan
-    db.session.add(result) 
-    db.session.commit()
     return jsonify({'Scan_added': new_scan}), 201
 
 # Update a parameter passing the id on the route
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
 def update_scan(scan_id):
-    #scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    scan = Result.query.filter_by(id=scan_id).first()
-    if not scan:
+    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    if len(scan) == 0:
         abort(404)
     if not request.json:
         abort(400)
@@ -150,4 +133,3 @@ def make_public_DetectOS(scan):
         else:
             new_scan[field] = scan[field]
     return new_scan
-
