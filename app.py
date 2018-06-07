@@ -1,6 +1,6 @@
 import os
 import sys
-import jwt
+#import jwt
 import datetime
 import json
 from flask_wtf.csrf import CSRFProtect
@@ -11,8 +11,8 @@ from flask_security import SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from flask_login import LoginManager    
-# Flask-admin 
+from flask_login import LoginManager, current_user    
+
 from flask_admin import Admin ,BaseView, expose
 from flask_admin.base import Admin, AdminIndexView, BaseView, MenuLink, expose
 #from flask_debugtoolbar import DebugToolbarExtension 
@@ -33,7 +33,30 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 # Create databas and admin page connection object
 db = SQLAlchemy(app)
 db.init_app(app)
+
 admin = Admin(app)
+login = LoginManager(app)
+# Create database connection object
+
+
+
+# class MyAdminIndexView(admin.AdminIndexView):
+    
+#     @expose('/')
+#     def index(self):
+#         if not login.current_user.is_authenticated():
+#             return redirect(url_for('.login_view'))
+#         return super(MyAdminIndexView, self).index()
+# ,  index_view=MyAdminIndexView()
+# @login.user_loader
+# def load_user(user_id):
+#     return User.query.get(user_id)
+
+# class MyAdminIndexView(AdminIndexView):
+#     def is_accessible(self):
+#         return  current_user.is_authenticated and current_user.has_role('admin')
+
+# admin = Admin(app, index_view=MyAdminIndexView())
 
 # Swagger documentation
 from swagger import *
@@ -47,8 +70,8 @@ from views import *
 #from token import *
 from api import * 
 
-# app.run()
-# HTTPS -> app.run(ssl_context=('cert.pem', 'key.pem'))
+# Normal run        -> app.run()
+# HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
 if __name__=="__main__":
-    #app.run()
-    app.run(ssl_context=('cert.pem', 'key.pem'))
+    app.run()
+    # app.run(ssl_context=('cert.pem', 'key.pem'))

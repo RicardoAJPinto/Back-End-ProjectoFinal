@@ -26,10 +26,13 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     api_key = db.Column(UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
-    maquina = db.relationship('Maquina', backref='owner')
-    historico = db.relationship('Historico', backref='owner')
+    machine = db.relationship('Machine', backref='owner')
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('userRole', lazy='dynamic'))
+
+    # Flask-Login integration
+    def is_authenticated(self):
+        return current_user.is_authenticated()
 
 ##########################  OAuth   ##########################
 # OAuthConsumerMixin will generate new parameters to the class
@@ -38,28 +41,18 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user = db.relationship(User)
 
 ##########################  xxxxx   ##########################
-historico_Maquina = db.Table('historico_Maquina',
-        db.Column('maquina_id', db.Integer(), db.ForeignKey('maquina.id')),
-        db.Column('hist_id', db.Integer(), db.ForeignKey('historico.id')))
 
-class Historico(db.Model, RoleMixin):
+class Historic(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    name = db.Column(db.String(80), unique=True)
-    resultado = db.Column(db.String(255))
-
-class Maquina(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    maquina = db.Column(db.String(255), unique=True)
-    roles = db.relationship('Historico', secondary=historico_Maquina,
-                            backref=db.backref('maqHist', lazy='dynamic'))
-
-
-class Result(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('maquina.id'))
+    machine_id = db.Column(db.Integer, db.ForeignKey('machine.id'))
     dataos = db.Column(JSONType)
+
+class Machine(db.Model, UserMixin): 
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    machine_id = db.Column(db.String(255), unique=True)
+    history = db.relationship('Historic', backref='owner')
+
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -67,8 +60,8 @@ security = Security(app, user_datastore)
 
 # Create a user to test with 
 # Runs 1 time
-# @app.before_first_request
-# def create_user():
-#     db.create_all()
-#     user_datastore.create_user(email='test@test.test', password=encrypt_password('test1234'))
-#     db.session.commit()
+@app.before_first_request
+def create_user():
+    db.create_all()
+    #user_datastore.create_user(email='test@test.test', password='test1234')
+    db.session.commit()

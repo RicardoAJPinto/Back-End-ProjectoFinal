@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_CHANGEABLE'] = True
-# Tirar isto quando se colocar confirmação conta por email
+# Tirar isto quando se colocar confirmacao conta por email
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 
 

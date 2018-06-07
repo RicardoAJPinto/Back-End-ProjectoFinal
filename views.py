@@ -51,8 +51,17 @@ def return_file():
     #headers = {"x-api-key": "eiWee8ep9due4deeshoa8Peichai8Ei2"}
     
     return render_template('index.html')
+    # Feature to add: Download zip/folder file 
     #return send_from_directory('agent', 'DetectOS.py', as_attachment=True)
-
+    # user_id='4'.encode('utf8')
+    # with open('pubkey.pem', mode='rb') as pubfile:
+    #     keydata = pubfile.read()
+    #     pub_key = rsa.PublicKey.load_pkcs1(keydata)
+    # encrypted = rsa.encrypt(user_id, pub_key)
+    # user_64 = base64.b64encode(encrypted)
+    # with open('agent/api.pem', mode='wb') as pubfile:
+    #     pubfile.write(user_64)
+    # return jsonify({'result':True})#send_from_directory('agent', 'zeus.py', as_attachment=True)
 
 ###########################  Error 404 ############################>##
 # I really need to explain this?
@@ -76,29 +85,29 @@ def createhist():
 #########################           Maquina             ###########################################
 
 
-@app.route('/maquina', methods=['POST']) 
-def createmaquina():
+@app.route('/machine', methods=['POST']) 
+def createmachine():
     data = request.get_json()
-    hist = Maquina(owner_id=data['owner'], maquina=data['maquina'])
+    hist = Machine(owner_id=data['owner'], machine_id=data['machine'])
     db.session.add(hist) 
     db.session.commit()  
     return jsonify({'message' : 'New machine created!'})
 
-@app.route('/maquina', methods=['DELETE'])   
+@app.route('/machine', methods=['DELETE'])   
 @token_required
-def deleteMaquina(current_user):
+def deletemachine(current_user):
     data = request.get_json()
-    maq = Maquina.query.filter_by(maquina=data['maquina']).first()
+    maq = machine.query.filter_by(machine=data['machine']).first()
     if not maq:
         return jsonify({'message' : 'No machine found!'})
     db.session.delete(maq)
     db.session.commit()
     return jsonify({'message' : 'The machine has been deleted!'})
 
-@app.route('/addMaquina', methods=['PUT']) 
-def addMaquina():
+@app.route('/addmachine', methods=['PUT']) 
+def addmachine():
     data = request.get_json()
-    machine = Maquina.query.filter_by(maquina=data['mach']).first()
+    machine = machine.query.filter_by(machine=data['mach']).first()
     if not machine:
         return jsonify({'message' : 'No machine found!'})
     hist = Historico.query.filter_by(name=data['histo']).first()

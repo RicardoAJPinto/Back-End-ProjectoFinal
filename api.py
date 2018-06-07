@@ -3,6 +3,10 @@ from flask_restful import Resource, Api
 from json import dumps
 from flask import jsonify, url_for, abort, request
 from model import User
+from model import Historic, Machine
+import ast
+import rsa
+import base64
 
 DetectOS = [
     {
@@ -48,6 +52,21 @@ def require_appkey(view_function):
         return view_function(key, *args, **kwargs)
     return decorated_function
 
+
+########################## REAL GENERATE PRIVATE KEY   (on comand line)
+   # openssl genrsa -out key.pem
+   # openssl rsa -in key.pem -RSAPublicKey_out -out pubkey.pem
+
+
+@app.route('/generatetest', methods=['GET'])
+def generate_keytest():
+
+    with open('pubkey.pem', mode='rb') as pubfile:
+        keydata = pubfile.read()
+    pub = rsa.PublicKey.load_pkcs1(keydata)
+    user_id = '4'.encode('utf8')
+    encrypted = rsa.encrypt(user_id, pub)
+    return jsonify({'result': True })
 ######################### API views ###################################
 # encode - decode -
 # Get all the scans
@@ -59,17 +78,44 @@ def get_scans(user):
 # Get the scan passing the ID on the route
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    return jsonify({'scan': scan[0]})
+    result = Historic.query.filter_by(id=scan_id).first()
+    if not scan:
+        return jsonify({'message' : 'No scan found!'})
+    out = {}
+    out['id'] = result.id
+    out['dataos'] = result.dataos
+    return jsonify({'Output' : out})
+
+    # scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    # if len(scan) == 0:
+    #     abort(404)
+    # return jsonify({'scan': scan[0]})
 
 # Post a new scan to the API
 @app.route('/api/scans', methods=['POST'])
 # @require_appkey
 def post_scan():
+    with open('key.pem', mode='rb') as privfile:
+        keydata = privfile.read()
+        priv_key = rsa.PrivateKey.load_pkcs1(keydata)
+    
+    if not 'user-id' in request.headers:
+        abort(400)
+    usernode = request.headers.get('user-id')
+    message_id = base64.b64decode(usernode)
+    user_id = rsa.decrypt(message_id, priv_key)
+    message_user = user_id.decode('utf8')
+
+    if not 'machine-id' in request.headers:
+        abort(400)
+    machinenode = request.headers.get('machine-id')
+    machine_message = base64.b64decode(machinenode)
+    machineid = rsa.decrypt(machine_message, priv_key)
+    message_machine = machineid.decode('utf8')
+
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)
+
     new_scan = {
         'id': DetectOS[-1]['id'] + 1,  
         'machine': request.json.get('machine', ""),
@@ -80,13 +126,26 @@ def post_scan():
         'version': request.json['version']
     }
     DetectOS.append(new_scan)
+    print(message_machine)
+    print(message_user)
+    mach = Machine.query.filter_by(machine_id=message_machine).first()
+    if not mach: 
+            hist = Machine(owner_id=message_user, machine_id=message_machine)
+            db.session.add(hist) 
+            db.session.commit()
+            mach = Machine.query.filter_by(machine_id=message_machine).first()  
+    result = Historic(machine_id = mach.id)
+    result.dataos = new_scan
+    db.session.add(result) 
+    db.session.commit()
     return jsonify({'Scan_added': new_scan}), 201
 
-# Update a parameter passing the id on the route
+# Update a parameter passing the id on the route ################################## NOT GOOD
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
 def update_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
+    #scan = [scan for scan in DetectOS if scan['id'] == scan_id]
+    scan = Historic.query.filter_by(id=scan_id).first()
+    if not scan:
         abort(404)
     if not request.json:
         abort(400)
@@ -114,10 +173,11 @@ def update_scan(scan_id):
 
 @app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
 def delete_scan(scan_id):
-    scan = [scan for scan in DetectOS if scan['id'] == scan_id]
-    if len(scan) == 0:
-        abort(404)
-    DetectOS.remove(scan[0])
+    scan = Historic.query.filter_by(id=scan_id).first()
+    if not scan:
+        return jsonify({'message' : 'No machine found!'})
+    db.session.delete(scan)
+    db.session.commit()
     return jsonify({'result': True})
 
 

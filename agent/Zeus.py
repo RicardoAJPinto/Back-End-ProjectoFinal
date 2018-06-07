@@ -15,3 +15,5 @@ schedule.every(1).minute.do(scan)
 while True:
     schedule.run_pending()
     
+import public.pem
+import api.pem
