@@ -73,5 +73,5 @@ from api import *
 # Normal run        -> app.run()
 # HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
 if __name__=="__main__":
-    app.run()
+    app.run(host= '0.0.0.0')
     # app.run(ssl_context=('cert.pem', 'key.pem'))

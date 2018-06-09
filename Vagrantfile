@@ -36,21 +36,36 @@ Vagrant.configure("2") do |config|
     # sudo apt-get install -yq python-dev # do I need this?
     sudo apt-get install -yq python3.6-dev
 
-    # installl pip for python3.6
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    # install pip for python3.6
+    su vagrant -c 'curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py'
     sudo python3.6 get-pip.py
 
     # nota: talvez tenha que mudar os nomes ao python, python3.5 e python3.6
 
     # install Pipenv (needed for Heroku, high-level virtualenv, ala Bundler)
-    pip install --user pipenv
+    # su vagrant -c 'pip3 install --user pipenv'
+    sudo pip3 install pipenv # install system wide
 
     # install postgres 
     sudo apt-get install -yq postgresql
     sudo apt-get install -yq libpq-dev
 
     # install graphviz for ER diagrams
-    sudo apt-get install -yq graphviz
+    sudo apt-get install -yq graphviz libgraphviz-dev graphviz-dev pkg-config
+    
+    # install all the python modules in the virtual env,
+    # activate the venv, create DB, USER, etc
+    # create all the DB tables
+    cd /vagrant
+    sudo -u vagrant -- bash -c 'pipenv install'
+    sudo -u vagrant -- bash -c 'make db/create'
+    sudo -u vagrant -- bash -c 'pipenv run make db/create/tables'
+    
+    # pipenv is not found this way...
+    # su vagrant -c 'pipenv install &&
+    #              pipenv shell &&
+    #               make db/create &&
+    #               make db/create/tables'
 
   SHELL
 
@@ -67,14 +82,6 @@ Vagrant.configure("2") do |config|
 
   #   sudo apt-get update
   #   sudo apt-get install -yq ntp git python-dev python-virtualenv postgresql libpq-dev
-
-  # SHELL
-
-    # su vagrant -c 'cd /vagrant &&
-    #                make venv/setup &&
-    #                source venv/bin/activate &&
-    #                make pip/update &&
-    #                make db/create'
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

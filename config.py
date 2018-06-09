@@ -1,7 +1,7 @@
 from app import app 
 import os 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/projetofinal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dev_user:dev_pass@localhost/projetofinal_dev'
 app.config['SECRET_KEY'] = '123654789'
 # Set the application in debug mode so that the server is reloaded on any code change & helps debug
 app.config['DEBUG'] = True
