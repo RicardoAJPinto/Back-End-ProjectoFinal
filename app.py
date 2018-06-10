@@ -24,6 +24,9 @@ app = Flask(__name__)
 
 # Configuration file   
 app.config.from_pyfile('config.py')     
+# FIXME: isto está a ser executado N vezes por causa dos imports
+# random from app import *, devia ser corrigido.
+# basta fazer o print(app.config) e ver que aparece N vezes
 
 s = URLSafeTimedSerializer('Thisisasecret!')
 
@@ -33,7 +36,6 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 # Create databas and admin page connection object
 db = SQLAlchemy(app)
 db.init_app(app)
-
 admin = Admin(app)
 login = LoginManager(app)
 # Create database connection object
