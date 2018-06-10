@@ -41,7 +41,7 @@ db/create/tables:
 
 db/create/er:
 	@echo "--> create ER Diagram from DB using ERAlchemy"
-	pipenv run eralchemy -i postgresql://$(DBUSER):$(DBPASS)@localhost/$(DBNAME) -o er.png
+	pipenv run eralchemy -i postgresql://$(DBUSER):$(DBPASS)@localhost/$(DBNAME) -o ER.png
 
 flask/server:
 	python app.py

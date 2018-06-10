@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
     # activate the venv, create DB, USER, etc
     # create all the DB tables
     cd /vagrant
-    sudo -u vagrant -- bash -c 'pipenv install'
+    sudo -u vagrant -- bash -c 'pipenv install --dev'
     sudo -u vagrant -- bash -c 'make db/create'
     sudo -u vagrant -- bash -c 'pipenv run make db/create/tables'
     
