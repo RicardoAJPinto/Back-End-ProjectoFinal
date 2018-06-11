@@ -23,8 +23,8 @@ app = Flask(__name__)
 #toolbar = DebugToolbarExtension()
 
 # Configuration file   
-app.config.from_pyfile('config.cfg')     
-# FIXME: isto está a ser executado N vezes por causa dos imports
+app.config.from_pyfile('config.cfg')
+# FIXME: isto esta a ser executado N vezes por causa dos imports
 # random from app import *, devia ser corrigido.
 # basta fazer o print(app.config) e ver que aparece N vezes
 
