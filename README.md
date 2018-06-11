@@ -13,7 +13,7 @@ git clone https://github.com/RicardoAJPinto/Back-End-ProjectoFinal.git
 cd Back-End-ProjectoFinal
 # 5. Download and provision the development VM (takes some minutes)
 vagrant up
-# The development VM is now ready with everything already installed
+# The development VM is now ready, everything has been installed
 # 6. SSH into the VM
 vagrant ssh
 # The /vagrant folder is shared between host and guest VM and contains the project files
