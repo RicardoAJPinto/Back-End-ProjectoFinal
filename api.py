@@ -95,7 +95,7 @@ def get_scanid(scan_id):
 @app.route('/api/scans', methods=['POST'])
 # @require_appkey
 def post_scan():
-    with open('key.pem', mode='rb') as privfile:
+    with open('keye.pem', mode='rb') as privfile:
         keydata = privfile.read()
         priv_key = rsa.PrivateKey.load_pkcs1(keydata)
     

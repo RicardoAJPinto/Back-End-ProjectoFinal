@@ -1,0 +1,361 @@
+"""Lower-level API for handling registry
+through ctypes.
+"""
+
+
+from ctypes import Structure
+from ctypes import byref
+from ctypes import c_ulong
+from ctypes import c_wchar_p
+from ctypes import create_string_buffer
+from ctypes import create_unicode_buffer
+from ctypes import sizeof
+from ctypes import windll
+
+import _winreg
+import struct
+import types
+
+
+DWORD = c_ulong
+HANDLE = DWORD
+
+REG_DWORD = _winreg.REG_DWORD
+REG_DWORD_BIG_ENDIAN = _winreg.REG_DWORD_BIG_ENDIAN
+REG_EXPAND_SZ = _winreg.REG_EXPAND_SZ
+REG_LINK = _winreg.REG_LINK
+REG_SZ = _winreg.REG_SZ
+REG_MULTI_SZ = _winreg.REG_MULTI_SZ
+
+# KEY_ALL_ACCESS: QUERY_VALUE, SET_VALUE, CREATE_SUB_KEY,
+#     ENUMERATE_SUB_KEYS, NOTIFY & CREATE_LINK combined
+KEY_ALL_ACCESS = 0xF003F
+KEY_CREATE_LINK = 0x0020
+KEY_CREATE_SUB_KEY = 0x0004
+KEY_EXECUTE = 0x20019
+# KEY_READ: STANDARD_RIGHTS_READ, QUERY_VALUE, ENUMERATE_SUB_KEYS, NOTIFY
+KEY_READ = 0x20019
+KEY_NOTIFY = 0x0010
+KEY_QUERY_VALUE = 0x0001
+KEY_SET_VALUE = 0x0002
+KEY_WOW64_32KEY = 0x0200
+KEY_WOW64_64KEY = 0x0100
+# KEY_WRITE: STANDARD_RIGHTS_WRITE, SET_VALUE, CREATE_SUB_KEY
+KEY_WRITE = 0x20006
+
+MAX_KEYNAME_SIZE = 255
+
+
+class FILETIME(Structure):
+    '''Sstructure used for getting last modified-time from registry key.'''
+    _fields_ = [
+                ('dwLowDateTime', DWORD),
+                ('dwHighDateTime', DWORD)
+               ]
+
+    def __str__(self):
+        text = 'dwLowDateTime: %s' % self.dwLowDateTime +\
+               'dwHighDateTime: %s' % self.dwHighDateTime
+        return text
+
+
+def _win2unixtime(seconds):
+    '''Changes last-modified time from Windows registry time into mktime.'''
+    # Time difference is 134774 days = days from 1.1.1600 -> 31.12.1968
+    # 134774 (days) * 24 (hours / day) * 3600 (seconds / hour) = 11644473600
+    diff = 11644473600
+    # Convert current time to seconds instead of hundreds of microseconds
+    seconds = seconds / pow(10, 7)
+    # Return time as unix timestamp
+    mktime = seconds - diff
+    return mktime
+
+
+def _python2wintype(data, regtype):
+    '''Changes data from Python type to format usable by Windows API.'''
+    if regtype in (REG_SZ, REG_EXPAND_SZ):
+        # String
+        buff = create_unicode_buffer(data)
+    elif regtype == REG_MULTI_SZ:
+        # Convert MULTI_SZ list to consecutive NULL-terminated strings
+        converted = ''
+        for item in data:
+            converted = ''.join((converted, item, '\x00'))
+        # Extra NULL-character required by MULTI_SZ is created automatically
+        buff = create_unicode_buffer(converted)
+    elif regtype in (REG_DWORD, REG_DWORD_BIG_ENDIAN):
+        buff = create_string_buffer(4)
+        if regtype == REG_DWORD:
+            buff.value = struct.pack('<l', int(data))
+        else:
+            buff.value = struct.pack('>l', int(data))
+    elif regtype == 11:
+        # REG_QWORD
+        buff = create_string_buffer(8)
+        buff.value = struct.pack('l2', int(data))
+    elif regtype == REG_LINK:
+        buff = create_string_buffer(len(data))
+        buff.value = data
+    else:
+        # REG_NONE, REG_LINK, REG_BINARY,
+        # REG_RESOURCE_LIST, REG_RESOURCE_REQUIREMENTS_LIST,
+        # REG_FULL_RESOURCE_DESCRIPTOR, unknown
+        buff = create_string_buffer(len(data))
+        buff.value = data
+    return buff
+
+
+def _win2pythontype(name, data, regtype):
+    '''Changes data from Windows registry data to corresponding Python type.'''
+    if regtype in (REG_SZ, REG_EXPAND_SZ):
+        if data[len(data) - 1:] != u'\x00':
+            # If data has not been stored with required NULL byte,
+            # return whole data
+            data = data[:len(data)]
+        else:
+            # Normally, strip ending NULL byte
+            data = data[:len(data) - 1]
+    elif regtype == REG_MULTI_SZ:
+        # Parse MULTI_SZ string to a list of strings
+        # Strip extra NULL bytes
+        datalen = len(data[:len(data)].rstrip(u'\x00'))
+        # Split data into list values
+        data = data[:datalen].split(u'\x00')
+        # If MULTI_SZ string is empty list, modify list to be empty
+        if data == [u'']:
+            data = []
+    elif regtype == REG_DWORD:
+        # Unpack DWORD to integer
+        data = struct.unpack('l', data[:4].ljust(4, '\x00'))[0]
+    elif regtype == REG_DWORD_BIG_ENDIAN:
+        # Unpack Big-Endian DWORD to integer
+        data = struct.unpack('>l', data[:4].rjust(4, '\x00'))[0]
+    elif regtype == 11:
+        # QWORD
+        # Unpack QWORD to integer
+        data = struct.unpack('ll', data[:8].ljust(8, '\x00'))[0]
+    else:
+        data = data[:len(data)]
+    return (name, data, regtype)
+
+
+# Connect, open & close - functions
+
+def ConnectRegistry(key, computer=None):
+    '''Establishes a connection to a predefined registry key.'''
+    reg = HANDLE()
+    if isinstance(key, types.StringTypes):
+        key = getattr(_winreg, key)
+    if computer is not None:
+        computer = unicode(computer)
+    feedback = windll.advapi32.RegConnectRegistryW(computer,
+                                                   key, byref(reg))
+    if feedback != 0:
+        raise WindowsError, feedback
+    else:
+        return reg.value
+
+
+def OpenKeyEx(reg, path, access=KEY_ALL_ACCESS):
+    '''Opens the specified registry key.'''
+    handle = HANDLE()
+    windll.advapi32.RegOpenKeyExW(reg, c_wchar_p(path),
+                                  0, access, byref(handle))
+    return handle.value
+
+
+def CloseKey(handle):
+    '''Closes a handle to the specified registry key.'''
+    return windll.advapi32.RegCloseKey(handle)
+
+
+# Key handling
+
+def CreateKey(handle, valuename):
+    '''Creates the specified registry key.'''
+    # Comment: Should this be changed to use RegCreateKeyExW instead?
+    new = DWORD()
+    valuename = unicode(valuename)
+    feedback = windll.advapi32.RegCreateKeyW(handle,
+                                             c_wchar_p(valuename),
+                                             byref(new))
+    if feedback != 0:
+        raise WindowsError, feedback
+    return new.value
+
+
+def DeleteKey(handle, keyname):
+    '''Deletes a subkey and its values.'''
+    return windll.advapi32.RegDeleteKeyW(handle,
+                                         c_wchar_p(keyname))
+
+
+def DeleteKeyEx(handle, keyname, sam=KEY_WOW64_32KEY):
+    '''Deletes a subkey and its values from the specified
+platform-specific view of the registry.'''
+    # sam:
+    # KEY_WOW64_32KEY  0x0200    Delete the key from the 32-bit registry view.
+    # KEY_WOW64_64KEY  0x0100    Delete the key from the 64-bit registry view.
+    return windll.advapi32.RegDeleteKeyExW(handle, c_wchar_p(keyname), sam, 0)
+
+
+def EnumKeyEx(handle, index):
+    '''Enumerates the subkeys of the specified open registry key.'''
+    # max key name size, +1 for terminating NULL character
+    name = create_unicode_buffer(MAX_KEYNAME_SIZE + 1)
+    feedback = windll.advapi32.RegEnumKeyExW(handle,
+                                             DWORD(index),
+                                             byref(name),
+                                             byref(DWORD(sizeof(name))),
+                                             None,
+                                             None,
+                                             None,
+                                             None)
+    if feedback != 0:
+        raise WindowsError, feedback
+    return name.value
+
+
+def QueryInfoKey(handle):
+    '''Retrieves information about the specified registry key.'''
+    no_subkeys = DWORD()
+    max_subkey_len = DWORD()
+    max_class_len = DWORD()
+    no_values = DWORD()
+    max_valuename_len = DWORD()
+    max_value_len = DWORD()
+    security_descr = DWORD()
+    last_write_time = FILETIME()
+
+    feedback = windll.advapi32.RegQueryInfoKeyW(handle,
+                                                None,
+                                                None,
+                                                None,
+                                                byref(no_subkeys),
+                                                byref(max_subkey_len),
+                                                byref(max_class_len),
+                                                byref(no_values),
+                                                byref(max_valuename_len),
+                                                byref(max_value_len),
+                                                byref(security_descr),
+                                                byref(last_write_time))
+    if feedback != 0:
+        raise WindowsError, feedback
+
+    if not (last_write_time.dwHighDateTime == 0 and
+            last_write_time.dwLowDateTime == 0):
+        last_mod_date = \
+            _win2unixtime(last_write_time.dwHighDateTime *0x100000000 +
+                          last_write_time.dwLowDateTime)
+    else:
+        last_mod_date = 0
+    return (no_subkeys.value,
+            max_subkey_len.value,
+            max_class_len.value,
+            no_values.value,
+            max_valuename_len.value,
+            max_value_len.value,
+            security_descr.value,
+            last_mod_date)
+
+
+# Value handling
+
+def DeleteValue(handle, valuename):
+    '''Removes a named value from the specified registry key.'''
+    return windll.advapi32.RegDeleteValueW(handle, unicode(valuename))
+
+
+def EnumValue(handle, index):
+    '''Enumerates the values for the specified open registry key.'''
+    # Finds lengths with QueryInfoKey
+    max_valuename_len = QueryInfoKey(handle)[4]
+    name = create_unicode_buffer(max_valuename_len + 1)
+    regtype, size = DWORD(), DWORD()
+    feedback = windll.advapi32.RegEnumValueW(handle,
+                                             DWORD(index),
+                                             byref(name),
+                                             byref(DWORD(sizeof(name))),
+                                             None,
+                                             byref(regtype),
+                                             None,
+                                             byref(size))
+    if feedback != 0:
+        raise WindowsError, feedback
+    if regtype.value in (REG_SZ,
+                         REG_MULTI_SZ,
+                         REG_EXPAND_SZ):
+        data = create_unicode_buffer(size.value / 2)
+    else:
+        data = create_string_buffer(size.value)
+    feedback = windll.advapi32.RegEnumValueW(handle,
+                                             DWORD(index),
+                                             byref(name),
+                                             byref(DWORD(sizeof(name))),
+                                             None,
+                                             byref(regtype),
+                                             byref(data),
+                                             byref(DWORD(sizeof(data)))
+                                             )
+    if feedback != 0:
+        raise WindowsError, feedback
+    return _win2pythontype(name.value, data, regtype.value)
+
+
+def QueryValueEx(handle, valuename):
+    '''Used to retrieve a value of a registry key.
+Handle must be a handle to an open registry key.'''
+    regtype, size = DWORD(), DWORD()
+    name = unicode(valuename)
+    feedback = windll.advapi32.RegQueryValueExW(handle,
+                                                name,
+                                                None,
+                                                byref(regtype),
+                                                None,
+                                                byref(size))
+    if feedback != 0:
+        raise WindowsError, feedback
+    if regtype.value in (REG_SZ, REG_MULTI_SZ, REG_EXPAND_SZ):
+        data = create_unicode_buffer(size.value / 2)
+    else:
+        data = create_string_buffer(size.value)
+    feedback = windll.advapi32.RegQueryValueExW(handle,
+                                                name,
+                                                None,
+                                                byref(regtype),
+                                                data,
+                                                byref(DWORD(sizeof(data)))
+                                                )
+    if feedback != 0:
+        raise WindowsError, feedback
+    return _win2pythontype(name, data, regtype.value)[1:]
+
+
+def SetValueEx(handle, valuename, regtype, data):
+    '''Sets the data and type of a specified value under a registry key.'''
+    # Types:
+    # REG_BINARY
+    # REG_DWORD
+    # REG_DWORD_LITTLE_ENDIAN
+    # REG_DWORD_BIG_ENDIAN
+    # REG_EXPAND_SZ
+    # REG_LINK
+    # REG_MULTI_SZ
+    # REG_NONE
+    # REG_SZ
+    # REG_RESOURCE_LIST
+    # REG_RESOURCE_REQUIREMENTS_LIST
+    # REG_FULL_RESOURCE_DESCRIPTOR
+    # REG_QWORD
+    # Convert name of the value to unicode, if necessary
+    valuename = unicode(valuename)
+    # Find numeric type of the registry value type, if possible
+    if isinstance(regtype, types.StringTypes):
+        regtype = getattr(_winreg, regtype)
+    buff = _python2wintype(data, regtype)
+    return windll.advapi32.RegSetValueExW(handle,
+                                          valuename,
+                                          0,
+                                          regtype,
+                                          buff,
+                                          sizeof(buff))

@@ -5,17 +5,18 @@ import datetime
 import json
 from flask_wtf.csrf import CSRFProtect
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response, Blueprint
+from flask import (Flask, render_template, request, redirect, url_for, 
+                    jsonify, make_response, Blueprint)
 from sqlalchemy_utils import JSONType
 from flask_security import SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, Security, roles_required, roles_accepted
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_login import LoginManager, current_user    
-
 from flask_admin import Admin ,BaseView, expose
 from flask_admin.base import Admin, AdminIndexView, BaseView, MenuLink, expose
 #from flask_debugtoolbar import DebugToolbarExtension 
+from flask_mail import Mail
 
 # Create app
 app = Flask(__name__)
@@ -69,9 +70,7 @@ from AdminPage import *
 from views import *
 #from token import *
 from api import * 
-
-# Normal run        -> app.run()
-# HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
+    
 if __name__=="__main__":
-    app.run()
-    # app.run(ssl_context=('cert.pem', 'key.pem'))
+    app.run()     # Normal run  
+    # app.run( ssl_context=('cert.pem', 'key.pem'))    # HTTPS+cert+key

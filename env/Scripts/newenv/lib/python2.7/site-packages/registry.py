@@ -1,0 +1,257 @@
+r"""Registry API for common registry tasks.
+
+GetValue(keypath, valuename) -> (value, value_type)
+SetValue(keypath, valuename, value, valuetype=None)
+DeleteValue(keypath, valuename)
+CreateKey(keypath)
+DeleteKey(keypath)
+DeleteTree(keypath)
+QueryInfoKey(keypath) -> (num_sub_keys, num_values, unix_timestamp)
+GetKeyValues(keypath, ignore_errors=False) ->
+    list of (valuename, value, valuetype)-tuples
+GetSubKeys(keypath, ignore_errors=False) -> list of subkeys
+GetDump(keypath, ignore_errors=False) -> dict containing value information
+GetValues(keypath, ignore_errors=False) -> set of tuples with value information
+GetKeysModifiedAfter(keypath, after) -> dict of keys with timestamps as values
+"""
+
+import _registry
+import _winreg
+import types
+
+ERROR_NO_MORE_ITEMS = 259
+KEY_ENUMERATE_SUB_KEYS = _winreg.KEY_ENUMERATE_SUB_KEYS
+
+
+def _GuessValueType(value):
+    '''Guess the type of the registry value.'''
+    if isinstance(value, types.StringTypes):
+        return _winreg.REG_SZ
+    elif isinstance(value, types.IntType) or isinstance(value, types.LongType):
+        return _winreg.REG_DWORD
+    elif isinstance(value, types.ListType):
+        return _winreg.REG_MULTI_SZ
+    else:
+        return _winreg.REG_BINARY
+
+
+def _ChangeToMKTime(seconds):
+    '''Change time by QueryInfoKey to mktime.'''
+    # Time difference is 134774 days = days from 1.1.1600 -> 31.12.1968
+    diff = 11644473600
+    seconds = seconds / pow(10, 7)
+    mktime = seconds - diff
+    return mktime
+
+
+def _EnumItem(function, handle):
+    '''Apply EnumKey or EnumValue to a opened registry handle.'''
+    lines = []
+    try:
+        i = 0
+        while True:
+            feedback = function(handle, i)
+            lines.append(feedback)
+            i += 1
+    except WindowsError, error:
+        if str(error) == str(ERROR_NO_MORE_ITEMS):
+            return lines
+        else:
+            raise
+
+
+def _SplitKey(keypath):
+    '''Split keypath to (main key, tail)-tuple.'''
+    try:
+        keytype, keyname = keypath.split('\\', 1)
+        return keytype, keyname
+    except ValueError:
+        # key is a main-level key
+        return keypath, None
+
+
+# FUNCTIONS HANDLING SPECIFIC KEY-VALUE
+
+def GetValue(keypath, valuename):
+    '''Return (registry, registry type)-tuple.'''
+    keytype, keyname = _SplitKey(keypath)
+    key = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(key)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_QUERY_VALUE)
+    value, valuetype = _registry.QueryValueEx(handle, valuename)
+    _registry.CloseKey(handle)
+    return value, valuetype
+
+
+def SetValue(keypath, valuename, value, valuetype=None):
+    '''Set registry value.'''
+    keytype, keyname = _SplitKey(keypath)
+    key = getattr(_winreg, keytype)
+    if valuetype is None:
+        valuetype = _GuessValueType(value)
+    elif isinstance(valuetype, types.StringTypes):
+        if valuetype == 'REG_QWORD':
+            valuetype = 11
+        else:
+            valuetype = getattr(_winreg, valuetype)
+    reg = _registry.ConnectRegistry(key)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_SET_VALUE)
+    _registry.SetValueEx(handle, valuename, valuetype, value)
+    _registry.CloseKey(handle)
+
+
+def DeleteValue(keypath, valuename):
+    '''Delete a registry value.'''
+    keytype, keyname = _SplitKey(keypath)
+    key = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(key)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_SET_VALUE)
+    _registry.DeleteValue(handle, valuename)
+    _registry.CloseKey(handle)
+
+
+
+# FUNCTIONS FOR KEYS
+
+def CreateKey(keypath):
+    '''Create a key to registry.'''
+    keypath, subkey = keypath.rsplit('\\', 1)
+    keytype, keyname = _SplitKey(keypath)
+    key = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(key)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_CREATE_SUB_KEY)
+    _registry.CreateKey(handle, subkey)
+    _registry.CloseKey(handle)
+   
+
+def DeleteKey(keypath):
+    '''Remove a key from the registry.'''
+    keypath, subkey = keypath.rsplit('\\', 1)
+    keytype, keyname = _SplitKey(keypath)
+    key = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(key)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_CREATE_SUB_KEY)
+    _registry.DeleteKey(handle, subkey)
+    _registry.CloseKey(handle)
+
+
+def DeleteTree(keypath):
+    '''Recursive remove keys and registry values from the registry.'''
+    # Recursively delete subkeys first, from bottom up.
+    subkeys = GetSubKeys(keypath)
+    for subkey in subkeys:
+        DeleteTree('%s\\%s' % (keypath, subkey))
+
+    # Delete registry values
+    subvalues = GetKeyValues(keypath)
+    for value in subvalues:
+        DeleteValue(keypath, value[0])
+
+    # Delete current key
+    DeleteKey(keypath)
+
+
+def QueryInfoKey(keypath):
+    '''Query information about a registry key.'''
+    keytype, keyname = _SplitKey(keypath)
+    keytype = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(keytype)
+    handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_QUERY_VALUE)
+    info = _registry.QueryInfoKey(handle)
+    _registry.CloseKey(handle)
+    return (info[0], info[3], info[7])
+
+
+def GetKeyValues(keypath, ignore_errors=False):
+    '''Get (valuename, value, valuetype)-tuples from a given registry key.'''
+    keytype, keyname = _SplitKey(keypath)
+    lines = []
+    # Get values from current key-path
+    keytype = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(keytype)
+    try:
+        handle = _registry.OpenKeyEx(reg, keyname, _winreg.KEY_QUERY_VALUE)
+    except WindowsError:
+        if ignore_errors:
+            return lines
+        else:
+            raise
+
+    try:
+        newlines = _EnumItem(_registry.EnumValue, handle)
+    except WindowsError:
+        _registry.CloseKey(handle)
+        if ignore_errors:
+            return lines
+        else:
+            raise
+
+    lines.extend(newlines)
+    _registry.CloseKey(handle)
+    lines.sort()
+    return lines
+
+
+def GetSubKeys(keypath, ignore_errors=False):
+    '''Find keys under given registry key.'''
+    keytype, keyname = _SplitKey(keypath)
+    lines = []
+    keytype = getattr(_winreg, keytype)
+    reg = _registry.ConnectRegistry(keytype)
+    try:
+        handle = _registry.OpenKeyEx(reg, keyname, KEY_ENUMERATE_SUB_KEYS)
+    except WindowsError:
+        if ignore_errors:
+            return lines
+        else:
+            raise
+
+    try:
+        newlines = _EnumItem(_registry.EnumKeyEx, handle)
+    except WindowsError:
+        _registry.CloseKey(handle)
+        if ignore_errors:
+            return lines
+        else:
+            raise
+
+    lines.extend(newlines)
+    _registry.CloseKey(handle)
+    return lines
+
+
+# FUNCTIONS FOR GETTING INFORMATION ABOUT KEYS
+
+def GetDump(keypath, ignore_errors=False):
+    '''Return a registry tree dump under a given registry key.'''
+    dump = {}
+    dump[keypath] = []
+    for valuename, data, valuetype in GetKeyValues(keypath, ignore_errors):
+        dump[keypath].append((valuename, data, valuetype))
+    for subkey in GetSubKeys(keypath, ignore_errors):
+        dump.update(GetDump("%s\\%s" % (keypath, subkey), ignore_errors))
+    return dump
+
+
+def GetValues(keypath, ignore_errors=False):
+    '''Get a registry tree dump of all values.'''
+    values = set()
+    for valuename, data, valuetype in GetKeyValues(keypath, ignore_errors):
+        if isinstance(data, list):
+            values.add((keypath, valuename, tuple(data), valuetype))
+        else:
+            values.add((keypath, valuename, data, valuetype))
+    for subkey in GetSubKeys(keypath, ignore_errors):
+        values.update(GetValues("%s\\%s" % (keypath, subkey), ignore_errors))
+    return values
+   
+
+def GetKeysModifiedAfter(keypath, after):
+    '''Return a dump of registry keys modified after a given time.'''
+    keys = {}
+    info = QueryInfoKey(keypath)
+    if info[2] >= after:
+        keys[keypath] = info[2]
+    for subkey in GetSubKeys(keypath):
+        keys.update(GetKeysModifiedAfter("%s\\%s" % (keypath, subkey), after))
+    return keys
