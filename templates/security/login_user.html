@@ -13,6 +13,16 @@
     <div class="card-header">Login</div>
     <div class="card-body">
       <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flash">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
         {{ login_user_form.hidden_tag() }}
         <div class="form-group">
           {{ render_field_with_errors(login_user_form.email, class="form-control") }}
@@ -20,7 +30,7 @@
 
         <div class="form-group">          
           {{ render_field_with_errors(login_user_form.password, class="form-control") }}
-          <a class="d-block small" href="forgot-password.html">Forgot your password?</a>
+          <a class="d-block small" href="/reset_password">Forgot your password?</a>
         </div>
         
         <div class="form-group">
@@ -42,11 +52,8 @@
 
 <div class="card card-login mx-auto mt-5">
     <div class="card-body"> 
-      <a class="btn btn-block btn-social btn-github" href="/github">
+      <a class="btn btn-block btn-social btn-github" href="{{ url_for("github.login") }}">
         <span class="fa fa-github"></span> Sign in with github
-      </a> 
-      <a class="btn btn-block btn-social btn-twitter" href="/twitter">
-        <span class="fa fa-twitter"></span> Sign in with Twitter
       </a> 
     </div>  
 </div>
