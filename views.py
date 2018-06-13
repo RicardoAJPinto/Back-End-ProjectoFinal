@@ -3,14 +3,19 @@ from model import *
 from flask import abort, request, send_file, send_from_directory, flash
 from api import *
 from flask_security import roles_required
-from forms import UpdateAccountForm
-
+from forms import UpdateAccountForm, EmailForm, PasswordForm
 from JsonWebToken import *
+import itsdangerous
 
 @app.route('/')
 # @roles_required('Admin')
 def home():
     return render_template('index.html')
+
+@app.route('/goreset')
+# @roles_required('Admin')
+def gogo():
+    return render_template('resetpassword.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -152,3 +157,54 @@ def addRole():
     user.roles.append(role)
     db.session.commit()
     return jsonify({'message' : 'Role added to user!'})
+
+
+################################ Reset Password #################################
+
+#users_blueprint = Blueprint('users', __name__, template_folder='templates')
+    
+@app.route('/reseted', methods=["POST"])
+def reseted():
+    email = request.form.get('email')
+    try:
+        user = User.query.filter_by(email=email).first()
+    except:
+        return render_template('password_reset_email.html', form=email)
+         
+    if user:
+        s = URLSafeTimedSerializer('Thisisasecret!')
+        token = s.dumps(email, salt='email-confirm')
+        msg = Message('Confirm Email', sender='ZeusNoReply@gmail.com', recipients=[email])
+        link = url_for('reset_with_token', token=token, _external=True)
+        msg.body = 'Your link to new password is {}'.format(link)
+        mail.send(msg)
+    else:
+        flash('Your email address must be confirmed before attempting a password reset.', 'error')
+        return redirect(url_for('users.login'))
+    return jsonify({'Result' : True})
+ 
+
+
+@app.route('/confirm_email/<token>', methods=["GET", "POST"])
+def reset_with_token(token):
+    try:
+        s = URLSafeTimedSerializer('Thisisasecret!')
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        try:
+            user = User.query.filter_by(email=email).first_or_404()
+        except:
+            flash('Invalid email address!', 'error')
+            return render_template('index.html')
+        #generate_password_hash(form.password.data, method='sha256')
+        user.password = form.password.data
+        db.session.add(user)
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return render_template('404.html')
+ 
+    return render_template('newpassword.html', form=form, token=token)

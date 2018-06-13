@@ -69,6 +69,7 @@ from AdminPage import *
 from views import *
 #from token import *
 from api import * 
+from pdf import *
 
 # Normal run        -> app.run()
 # HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
