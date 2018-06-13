@@ -16,6 +16,8 @@ app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_CHANGEABLE'] = True
 # Tirar isto quando se colocar confirmacao conta por email
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+# Specifies the default view to redirect to after a user logs in.
+SECURITY_POST_LOGIN_VIEW = '/dashboard'
 
 
 app.config['WTF_CSRF_ENABLED'] = False
@@ -31,7 +33,7 @@ app.config['SECURITY_PASSWORD_SALT'] = '$2a$16$PnnIgfMwkOjGX4SkHqSOPO'
 
 app.config['MAIL_SERVER'] = ''
 
-# To solve: (insecure_transport) OAuth 2 MUST utilize https.
+# (insecure_transport) OAuth 2 MUST utilize https.
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Application threads. A common general assumption is
