@@ -37,7 +37,7 @@ db/destroy/user:
 
 db/create/tables:
 	@echo "--> create DB tables using SQAlchemy"
-	python -c 'from app import db; db.create_all();'
+	pipenv run python -c 'from app import db; db.create_all();'
 
 db/create/er:
 	@echo "--> create ER Diagram from DB using ERAlchemy"

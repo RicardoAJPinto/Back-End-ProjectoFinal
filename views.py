@@ -118,7 +118,7 @@ def return_file():
     ## Try to delete the file ##
     try:
         os.remove(myfile)
-    except OSError, e:  ## if failed, report it back to the user ##
+    except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))
 
 if __name__ == "__main__":
