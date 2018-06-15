@@ -97,14 +97,19 @@ def return_file():
 
         print('All files zipped successfully!')    
     
-    # mode a da para fazer append
     # Insert API key from the authenticated user
-    f = open('agent/config.py', 'w')
-    print(current_user)
     insertAPIkey = str(current_user.api_key)
-    f.write('headers= { "x-api-key":"'+ insertAPIkey + '"} \n')  # python will convert \n to os.linesep
-    f.close()  # you can omit in most cases as the destructor will call it
-    
+
+    #user_id='4'.encode('utf8')
+    apikey = insertAPIkey.encode('utf8')
+    with open('pubkey.pem', mode='rb') as pubfile:
+        keydata = pubfile.read()
+        pub_key = rsa.PublicKey.load_pkcs1(keydata)
+    encrypted = rsa.encrypt(apikey, pub_key)
+    user_64 = base64.b64encode(encrypted)
+    with open('agent/api.pem', mode='wb') as pubfile:
+        pubfile.write(user_64)
+
     # Zip files
     get_all_file_paths('.\repos\Back-End-ProjectoFinal\agent')
     zipping()
@@ -124,18 +129,10 @@ def return_file():
 if __name__ == "__main__":
     main()
 
-    # user_id='4'.encode('utf8')
-    # with open('pubkey.pem', mode='rb') as pubfile:
-    #     keydata = pubfile.read()
-    #     pub_key = rsa.PublicKey.load_pkcs1(keydata)
-    # encrypted = rsa.encrypt(user_id, pub_key)
-    # user_64 = base64.b64encode(encrypted)
-    # with open('agent/api.pem', mode='wb') as pubfile:
-    #     pubfile.write(user_64)
-    # return jsonify({'result':True})#send_from_directory('agent', 'zeus.py', as_attachment=True)
 
 ###########################  Error 404 ############################>##
 # I really need to explain this?
+
 @app.errorhandler(404)
 def page_not_found(e):
     #return make_response(jsonify({'error': 'Not found'}), 404)
@@ -154,7 +151,6 @@ def createhist():
 
 
 #########################           Maquina             ###########################################
-
 
 @app.route('/machine', methods=['POST']) 
 def createmachine():
@@ -228,7 +224,7 @@ def addRole():
 ################################ Reset Password #################################
 
 #users_blueprint = Blueprint('users', __name__, template_folder='templates')
-    
+
 @app.route('/reseted', methods=["POST"])
 def reseted():
     form = RequestResetForm()
