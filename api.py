@@ -29,9 +29,6 @@ DetectOS = [
     }
 ]
 
-# To test:
-#    -curl http://127.0.0.1:5000/api/scans
-#    -curl -v -H "x-api-key: eiWee8ep9due4deeshoa8Peichai8Ei2" http://127.0.0.1:5000/api/scans 
 ######################### Decorators #################################
 # API key validation
 def require_appkey(view_function):
@@ -57,16 +54,16 @@ def require_appkey(view_function):
    # openssl genrsa -out key.pem
    # openssl rsa -in key.pem -RSAPublicKey_out -out pubkey.pem
 
-
 @app.route('/generatetest', methods=['GET'])
 def generate_keytest():
 
     with open('pubkey.pem', mode='rb') as pubfile:
         keydata = pubfile.read()
     pub = rsa.PublicKey.load_pkcs1(keydata)
-    user_id = '4'.encode('utf8')
+    user_id = current_user.user_id.encode('utf8')
     encrypted = rsa.encrypt(user_id, pub)
     return jsonify({'result': True })
+    
 ######################### API views ###################################
 # encode - decode -
 # Get all the scans
@@ -129,11 +126,14 @@ def post_scan():
     print(message_machine)
     print(message_user)
     mach = Machine.query.filter_by(machine_id=message_machine).first()
+    user = User.query.filter_by(api_key=message_user).first()
+    if not user:
+        abort(500)
     if not mach: 
-            hist = Machine(owner_id=message_user, machine_id=message_machine)
-            db.session.add(hist) 
-            db.session.commit()
-            mach = Machine.query.filter_by(machine_id=message_machine).first()  
+        hist = Machine(owner_id=user.id, machine_id=message_machine)
+        db.session.add(hist) 
+        db.session.commit()
+        mach = Machine.query.filter_by(machine_id=message_machine).first()  
     result = Historic(machine_id = mach.id)
     result.dataos = new_scan
     db.session.add(result) 

@@ -8,7 +8,6 @@ import uuid
 import rsa
 import base64
 
-
 with open('public.pem', mode='rb') as pubfile:
   keydata = pubfile.read()
   pub_key = rsa.PublicKey.load_pkcs1(keydata)
@@ -16,7 +15,7 @@ with open('api.pem', mode='rb') as idfile:
   api_file = idfile.read()
 
 def OperatingSystem():
-      payload = {}
+  payload = {}
   if linux_distribution()[1] == ' ':
     payload["Public Release:"] = linux_distribution()[1]
   for i in range(0, len(uname())):

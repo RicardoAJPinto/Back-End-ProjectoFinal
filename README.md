@@ -1,6 +1,41 @@
 Zeus - Agent Based Vulnerability Assessment
 ===========
 
+
+New instructions using Vagrant (reorganizar depois)
+------------
+```bash
+# 1. Install VirtualBox, Vagrant and Git Bash (latest versions)
+# 2. Open a git bash shell
+# 3. Clone the repo
+git clone https://github.com/RicardoAJPinto/Back-End-ProjectoFinal.git
+# 4. Go to the project folder
+cd Back-End-ProjectoFinal
+# 5. Download and provision the development VM (takes some minutes)
+vagrant up
+# The development VM is now ready, everything has been installed
+# 6. SSH into the VM
+vagrant ssh
+# The /vagrant folder is shared between host and guest VM and contains the project files
+# 7. Go to /vagrant folder
+cd /vagrant
+# 8. Start the virtual environment using Pipenv
+pipenv shell
+# 9. Start the server with one of the following
+make flask/dev
+make flask/prod
+python app.py
+# 10. In the host open http://localhost:5000
+
+# 11. When finish, exit the guest and don't forget to halt the VM
+vagrant halt # in the host
+
+# Other relevant commands
+pipenv install --dev
+pipenv install / uninstall <module>
+make <see Makefile file>
+``` 
+
 Prerequisites
 ------------
 ```bash
