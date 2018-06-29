@@ -7,6 +7,8 @@ from uuid import uuid4
 import sqlalchemy
 from sqlalchemy.dialects.postgresql import UUID
 
+# CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 ##########################   User && Roles DB   ##########################
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
