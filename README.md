@@ -1,11 +1,16 @@
 Zeus - Agent Based Vulnerability Assessment
 ===========
 
+Prerequisites
+------------
+#### 1. Install(lastest versions) :
+* VirtualBox
+* Vagrant 
+* Git Bash
 
-New instructions using Vagrant (reorganizar depois)
+Deploy project on Vagrant 
 ------------
 ```bash
-# 1. Install VirtualBox, Vagrant and Git Bash (latest versions)
 # 2. Open a git bash shell
 # 3. Clone the repo
 git clone https://github.com/RicardoAJPinto/Back-End-ProjectoFinal.git
@@ -36,43 +41,18 @@ pipenv install / uninstall <module>
 make <see Makefile file>
 ``` 
 
-Prerequisites
+
+Connect to DB 
+------------
 ------------
 ```bash
-sudo apt update
-sudo apt-get install python3.6
-sudo apt install python-pip 
-``` 
+sudo -u postgres psql postgres
+\l #show all database to connect
+\connect database_name
+SELECT * FROM table_name;
+\q #Exit
 
-Quick setup
-------------
-### 1. Clone repository
-```bash
-git clone https://github.com/RicardoAJPinto/Back-End-ProjectoFinal.git
-cd Back-End-ProjectoFinal
-``` 
 
-### 2. Create database
-```bash
-python
-from app import db
-db.create_all()
-exit()
-``` 
-
-### 3. Activate enviroment && install requirements
-```bash
-cd env/Scripts/
-source activate
-#--- Case you are on Windows:--------------
-pip install -r requirements.txt
-#---On unix system we advice to install:---
-pip install -r requirementsLinux.txt
-``` 
-
-### 4. Finnaly, run the god damn project
-```bash
-python app.py
 ``` 
 
 Used technologies
