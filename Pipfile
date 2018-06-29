@@ -101,6 +101,7 @@ WTForms = "*"
 rsa = "*"
 "psycopg2-binary" = "*"
 bcrypt = "*"
+gunicorn = "*"
 
 [dev-packages]
 eralchemy = "*"
