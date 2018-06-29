@@ -70,6 +70,6 @@ from pdf import *
 # Normal run        -> app.run()
 # HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
 if __name__=="__main__":
-    app.run(debug=True, port=33507)
-    #app.run(host= '0.0.0.0')    # Normal run  
+    #app.run(debug=True, port=33507)
+    app.run(host= '0.0.0.0')    # Normal run  
     # app.run( ssl_context=('cert.pem', 'key.pem'))    # HTTPS+cert+key
