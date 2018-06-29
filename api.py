@@ -12,21 +12,13 @@ DetectOS = [
     {
         'id': 1,
         "system": "Windows",
-        "node": "Mr-Sequeira",
+        "node": "Example",
         "release": "10",
         "version": "10.0.17134",
         "machine": "AMD64",
         "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
     },
-    {
-        'id': 2,
-        "system": "Linux",
-        "node": "xxxxxx",
-        "release": "xxxxx",
-        "version": "xxxx",
-        "machine": "xxxxx",
-        "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
-    }
+
 ]
 
 ######################### Decorators #################################
@@ -105,14 +97,23 @@ def post_scan():
 
     if not 'machine-id' in request.headers:
         abort(400)
+    
     machinenode = request.headers.get('machine-id')
     machine_message = base64.b64decode(machinenode)
     machineid = rsa.decrypt(machine_message, priv_key)
     message_machine = machineid.decode('utf8')
+    print(message_machine)
+
+    # If already exists the machine:
+    exists = Machine.query.filter_by(machine_id=message_machine).first()
+    if exists:    
+        abort(400, 'Already scanned this machine')
+        # url = 'http://127.0.0.1:5000/api/scans'
+        # requestpost = requests.post(url , json=payload, headers=headers)
 
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)
-
+    
     new_scan = {
         'id': DetectOS[-1]['id'] + 1,  
         'machine': request.json.get('machine', ""),
@@ -170,7 +171,6 @@ def update_scan(scan_id):
     scan[0]['version'] = request.json.get('version', scan[0]['version'])
     return jsonify({'Updated_scan': scan[0]})
 
-
 @app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
 def delete_scan(scan_id):
     scan = Historic.query.filter_by(id=scan_id).first()
@@ -179,7 +179,6 @@ def delete_scan(scan_id):
     db.session.delete(scan)
     db.session.commit()
     return jsonify({'result': True})
-
 
 def make_public_DetectOS(scan):
     new_scan = {}

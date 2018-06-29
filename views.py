@@ -13,6 +13,10 @@ import itsdangerous
 @app.route('/')
 def home():
     return render_template('index.html')
+@app.route('/about')
+def about():
+    return render_template('index/about.html')
+
 
 @app.route('/goreset')
 # @roles_required('Admin')
@@ -45,7 +49,7 @@ def resetpwd():
     # form = RequestResetForm()
     # return render_template('resetpassword.html', form=form)
 
-#<token> && token in parameter of the function
+#<token> && token in parameter of the funct ion
 @app.route('/new_password/', methods=['GET', 'POST'])
 def newpwd():
     form = ResetPasswordForm()
@@ -100,7 +104,6 @@ def return_file():
     # Insert API key from the authenticated user
     insertAPIkey = str(current_user.api_key)
 
-    #user_id='4'.encode('utf8')
     apikey = insertAPIkey.encode('utf8')
     with open('pubkey.pem', mode='rb') as pubfile:
         keydata = pubfile.read()
@@ -132,7 +135,6 @@ if __name__ == "__main__":
 
 ###########################  Error 404 ############################>##
 # I really need to explain this?
-
 @app.errorhandler(404)
 def page_not_found(e):
     #return make_response(jsonify({'error': 'Not found'}), 404)

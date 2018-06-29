@@ -25,10 +25,10 @@
 
         {{ login_user_form.hidden_tag() }}
         <div class="form-group">
-          {{ render_field_with_errors(login_user_form.email, class="form-control") }}
+          {{ render_field_with_errors(login_user_form.email, class="form-control", ) }}
         </div>
 
-        <div class="form-group">          
+        <div class="form-group">  
           {{ render_field_with_errors(login_user_form.password, class="form-control") }}
           <a class="d-block small" href="/reset_password">Forgot your password?</a>
         </div>
