@@ -9,8 +9,8 @@ def quickstart():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    url = 'https://zeus-security.herokuapp.com/api/scans' # Heroku
-    #url = 'http://127.0.0.1:5000/api/scans' # Local
+    #url = 'https://zeus-security.herokuapp.com/api/scans' # Heroku
+    url = 'http://127.0.0.1:5000/api/scans' # Local
     insertAPIkey = str(current_user.api_key)
     headers= { "x-api-key": insertAPIkey} 
 

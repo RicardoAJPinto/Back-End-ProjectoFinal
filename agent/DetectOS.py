@@ -24,8 +24,8 @@ def OperatingSystem():
 
   from config import headers
   # Url of the endpoint to post the scans
-  #url = 'http://127.0.0.1:5000/api/scans'
-  url = 'https://zeus-security.herokuapp.com/api/scans'
+  url = 'http://127.0.0.1:5000/api/scans'
+  # url = 'https://zeus-security.herokuapp.com/api/scans'
   
   machine_id=hex(uuid.getnode()).encode('utf8')
   encrypted = rsa.encrypt(machine_id, pub_key)

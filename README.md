@@ -51,17 +51,29 @@ SELECT * FROM table_name;
 \q #Exit
 ``` 
 
-
 Deploy project on Heroku
 ------------
-Change files(path to API or DB):
+
+#### 1. Install :
+* Heroku CLI
+* Git Bash
+
+#### 2. Change files(path to API or DB):
 * Dashboard.py
 * config.cfg
-* app.py
+* agent/Detect.OS.py
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+#### 3. Simple commands to iteract with Heroku :
+```bash
+heroku login
+heroku pg:psql #Connect to PostgreSQL
+heroku run bash #That's it xD 
+``` 
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/RicardoAJPinto/Back-End-ProjectoFinal)
+
+If you need help: https://devcenter.heroku.com/articles/getting-started-with-python#deploy-the-app 
+
 Used technologies
 ------------
 * Python 3.6.4
