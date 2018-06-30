@@ -13,15 +13,10 @@ import itsdangerous
 @app.route('/')
 def home():
     return render_template('index.html')
+
 @app.route('/about')
 def about():
     return render_template('index/about.html')
-
-
-@app.route('/goreset')
-# @roles_required('Admin')
-def gogo():
-    return render_template('resetpassword.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -120,18 +115,14 @@ def return_file():
     # Feature to add: Download zip/folder file 
     return send_from_directory('agent', 'Zeus-Agent.zip', as_attachment=True)
 
-    ## Get input ##
-    myfile="Zeus-Agent.zip"
-
     ## Try to delete the file ##
     try:
-        os.remove(myfile)
+        os.remove("Zeus-Agent.zip")
     except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))
 
 if __name__ == "__main__":
     main()
-
 
 ###########################  Error 404 ############################>##
 # I really need to explain this?
@@ -142,7 +133,6 @@ def page_not_found(e):
 
 
 ###########################           Historico           #########################################
-
 @app.route('/hist', methods=['POST'])
 def createhist():
     data = request.get_json()
@@ -153,7 +143,6 @@ def createhist():
 
 
 #########################           Maquina             ###########################################
-
 @app.route('/machine', methods=['POST']) 
 def createmachine():
     data = request.get_json()

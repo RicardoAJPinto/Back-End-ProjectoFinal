@@ -41,9 +41,7 @@ pipenv install / uninstall <module>
 make <see Makefile file>
 ``` 
 
-
 Connect to DB 
-------------
 ------------
 ```bash
 sudo -u postgres psql postgres
@@ -51,10 +49,19 @@ sudo -u postgres psql postgres
 \connect database_name
 SELECT * FROM table_name;
 \q #Exit
-
-
 ``` 
 
+
+Deploy project on Heroku
+------------
+Change files(path to API or DB):
+* Dashboard.py
+* config.cfg
+* app.py
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/RicardoAJPinto/Back-End-ProjectoFinal)
 Used technologies
 ------------
 * Python 3.6.4

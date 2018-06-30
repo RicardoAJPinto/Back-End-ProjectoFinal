@@ -1,7 +1,9 @@
-from app import *
+from app import app, db
+from functools import wraps
 from flask_restful import Resource, Api
+from flask_login import LoginManager, current_user
 from json import dumps
-from flask import jsonify, url_for, abort, request
+from flask import jsonify, url_for, abort, request, render_template, redirect, url_for
 from model import User
 from model import Historic, Machine
 import ast
@@ -18,7 +20,6 @@ DetectOS = [
         "machine": "AMD64",
         "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
     },
-
 ]
 
 ######################### Decorators #################################

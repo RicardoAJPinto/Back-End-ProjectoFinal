@@ -1,6 +1,5 @@
 import os
 import sys
-#import jwt
 import datetime
 import json
 from flask_wtf.csrf import CSRFProtect
@@ -33,7 +32,6 @@ db = SQLAlchemy(app)
 db.init_app(app)
 admin = Admin(app)
 login = LoginManager(app)
-# Create database connection object
 
 # class MyAdminIndexView(admin.AdminIndexView):
     
@@ -52,6 +50,7 @@ login = LoginManager(app)
 #         return  current_user.is_authenticated and current_user.has_role('admin')
 
 # admin = Admin(app, index_view=MyAdminIndexView())
+# OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Swagger documentation
@@ -67,15 +66,7 @@ from views import *
 from api import * 
 from pdf import *
 
-# Normal run        -> app.run()
-# HTTPS+cert+key    -> app.run(ssl_context=('cert.pem', 'key.pem'))
 if __name__=="__main__":
-<<<<<<< HEAD
-    #app.run(debug=True, port=33507)
-    app.run(host= '0.0.0.0')    # Normal run  
-=======
-    #app.run(debug=True, port=$PORT)
     port = int(os.environ.get('PORT', 5000))
     app.run(host= '0.0.0.0', port=port)    # Normal run  
->>>>>>> 99f529f... Heroku++
     # app.run( ssl_context=('cert.pem', 'key.pem'))    # HTTPS+cert+key

@@ -1,0 +1,8 @@
+{
+    "name": "Start on Heroku: Zeus",
+    "description": "A barebones Python app, which can easily be deployed to Heroku.",
+    "repository": "https://github.com/RicardoAJPinto/Back-End-ProjectoFinal",
+    "image": "heroku/python",
+    "keywords": ["python", "flask"],
+    "addons": [ "heroku-postgresql" ]
+  }
