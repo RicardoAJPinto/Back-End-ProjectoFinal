@@ -5,9 +5,6 @@ from sqlalchemy_utils import UUIDType, JSONType
 
 from app import app, db
 
-
-# from config import *
-
 migrate = Migrate(app, db)
 manager = Manager(app)
 
