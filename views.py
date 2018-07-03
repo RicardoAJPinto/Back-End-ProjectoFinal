@@ -152,10 +152,10 @@ def createmachine():
     return jsonify({'message' : 'New machine created!'})
 
 @app.route('/machine', methods=['DELETE'])   
-@token_required
-def deletemachine(current_user):
-    data = request.get_json()
-    maq = machine.query.filter_by(machine=data['machine']).first()
+@login_required
+def deletemachine():
+    form = DeleteMachineForm()
+    maq = Machine.query.filter_by(id=form.machine.data).first()
     if not maq:
         return jsonify({'message' : 'No machine found!'})
     db.session.delete(maq)

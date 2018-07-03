@@ -31,3 +31,6 @@ class ResetPasswordForm(FlaskForm):
                                         validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset password ')
     
+class DeleteMachineForm(FlaskForm):
+    machine = StringField('Delete', validators=[DataRequired()])
+    submit = SubmitField('Delete Machine ')

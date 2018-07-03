@@ -17,6 +17,14 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
+class Test(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    DetectOS = db.Column(db.Boolean(), nullable=False)
+    AV = db.Column(db.Boolean(), nullable=False)
+    history = db.relationship('Historic', backref='TestHist')
+    user = db.relationship('User', backref='test')
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
@@ -25,6 +33,7 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     api_key = db.Column(UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
     machine = db.relationship('Machine', backref='owner')
+    test_id = db.Column(db.Integer, db.ForeignKey('test.id'), default=1)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('userRole', lazy='dynamic'))
 
@@ -43,6 +52,7 @@ class OAuth(OAuthConsumerMixin, db.Model):
 class Historic(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     machine_id = db.Column(db.Integer, db.ForeignKey('machine.id'))
+    test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
     dataos = db.Column(JSONType)
 
 class Machine(db.Model, UserMixin): 
