@@ -9,6 +9,7 @@ from model import Historic, Machine
 import ast
 import rsa
 import base64
+import json
 
 DetectOS = [
     {
@@ -22,6 +23,14 @@ DetectOS = [
     },
 ]
 
+
+@app.route('/receiver', methods = ['GET','POST'])
+def worker():
+    if not request.json:
+        abort(400)
+    print(request.json)
+    return json.dumps(request.json)
+    
 ######################### Decorators #################################
 # API key validation
 def require_appkey(view_function):
@@ -46,7 +55,6 @@ def require_appkey(view_function):
 ########################## REAL GENERATE PRIVATE KEY   (on comand line)
    # openssl genrsa -out key.pem
    # openssl rsa -in key.pem -RSAPublicKey_out -out pubkey.pem
-
 @app.route('/generatetest', methods=['GET'])
 def generate_keytest():
 
@@ -106,11 +114,11 @@ def post_scan():
     print(message_machine)
 
     # If already exists the machine:
-    exists = Machine.query.filter_by(machine_id=message_machine).first()
-    if exists:    
-        abort(400, 'Already scanned this machine')
-        # url = 'http://127.0.0.1:5000/api/scans'
-        # requestpost = requests.post(url , json=payload, headers=headers)
+    # exists = Machine.query.filter_by(machine_id=message_machine).first()
+    # if exists:    
+    #     abort(400, 'Already scanned this machine')
+    #     # url = 'http://127.0.0.1:5000/api/scans'
+    #     # requestpost = requests.post(url , json=payload, headers=headers)
 
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)

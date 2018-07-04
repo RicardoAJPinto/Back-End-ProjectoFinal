@@ -14,7 +14,8 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_login import LoginManager, current_user    
 from flask_admin import Admin ,BaseView, expose
 from flask_admin.base import Admin, AdminIndexView, BaseView, MenuLink, expose
-from flask_mail import Mail
+from flask_mail import Mail, Message
+import flask_login
 
 # Create app
 app = Flask(__name__)
@@ -31,8 +32,11 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 db = SQLAlchemy(app)
 db.init_app(app)
 admin = Admin(app)
-login = LoginManager(app)
+#login = LoginManager(app)
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
 
+mail = Mail(app)
 # class MyAdminIndexView(admin.AdminIndexView):
     
 #     @expose('/')
@@ -52,9 +56,6 @@ login = LoginManager(app)
 # admin = Admin(app, index_view=MyAdminIndexView())
 # OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-# Swagger documentation
-from swagger import *
 
 # Authentication via other platforms
 from OAuth import *

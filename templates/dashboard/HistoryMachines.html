@@ -5,24 +5,69 @@ Quick-start page
 {% endblock %}
 
 {% block breadcrumb %} 
-Geral view Dashboard
+Geral view of all machines running the agent
 {% endblock %}
 
 {% block script %} 
-<script>
+<script> 
+document.addEventListener('DOMContentLoaded', function main(e) {
   $('#refresh').click(function() {
     window.location.reload();
   });
+  
+  function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+  }
+
+  var d = new Date(); 
+  var h = addZero(d.getHours());
+  var m = addZero(d.getMinutes());
+  var s = addZero(d.getSeconds());
+  document.getElementById("demo").innerHTML = "Last update on " + d.toDateString() + ", precisely at: "+ h + ":" + m + ":" + s;
+});
 </script>
 {% endblock %}
 
 {% block content %}
+
+<H1>DELETE MACHINE</H1>
+<form method="DELETE" action="" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <fieldset class="form-group">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <!-- <strong>Title</strong> --> {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+      {% endwith %}
+
+      <legend class="border-bottom mb-4">Machine Info</legend>
+      <div class="form-group">
+              {{ form.machine.label(class="form-control-label") }}
+              {{ form.machine(class="form-control form-control-lg") }}
+      </div>
+
+  </fieldset>
+  <div class="form-group">
+      {{ form.submit(class="btn btn-danger btn-block") }}
+  </div>
+</form>
+
+
 <div class="card mb-3">
     <div class="card-header">
       <div class="row"> 
           <div class="col-10">
             <h2> 
-              <i class="fa fa-area-chart"></i> History of machines 
+              <i class="fa fa-laptop"></i> History of machines 
             </h2>
           </div>
           <div class="col">
@@ -33,6 +78,7 @@ Geral view Dashboard
       </div>
     </div>
 
+    <!-- Representation of the scans -->
     <div class="card-body">
       <div class="row">
         {% for i in range(json_size) %}
@@ -92,9 +138,9 @@ Geral view Dashboard
       </div>
       {% endfor %}
     </div>
-    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+    <div class="card-footer small text-muted" id="demo"> </div>
   </div>
-
+</div>
 {% endblock %}
 
 

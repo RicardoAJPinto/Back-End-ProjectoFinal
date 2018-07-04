@@ -1,4 +1,4 @@
-from app import app
+from app import app, mail
 from model import *
 from flask import abort, request, send_file, send_from_directory, flash
 from api import *
@@ -38,25 +38,6 @@ def perfil():
 def change():
     return render_template('security/login_user.html')
 
-@app.route('/reset_password', methods=['GET', 'POST'])
-def resetpwd():
-    return render_template('resetpassword.html')
-    # form = RequestResetForm()
-    # return render_template('resetpassword.html', form=form)
-
-#<token> && token in parameter of the funct ion
-@app.route('/new_password/', methods=['GET', 'POST'])
-def newpwd():
-    form = ResetPasswordForm()
-    return render_template('newpassword.html', form=form)
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.passowrd.data)
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been updated! Now you are able to log in')
-        return redirect(url_for('login'))
-
-
 from dashboard import *
 
 # Download file
@@ -72,6 +53,12 @@ def return_file():
                 # join the two strings in order to form the full filepath.
                 filepath = os.path.join(root, filename)
                 file_paths.append(filepath)
+
+        ## Try to delete the file ##
+        try:
+            os.remove("./agent/Zeus-Agent.zip")
+        except OSError as e:  ## if failed, report it back to the user ##
+            print ("Error: %s - %s." % (e.filename, e.strerror))
 
         # returning all file paths
         return file_paths        
@@ -115,12 +102,6 @@ def return_file():
     # Feature to add: Download zip/folder file 
     return send_from_directory('agent', 'Zeus-Agent.zip', as_attachment=True)
 
-    ## Try to delete the file ##
-    try:
-        os.remove("Zeus-Agent.zip")
-    except OSError as e:  ## if failed, report it back to the user ##
-        print ("Error: %s - %s." % (e.filename, e.strerror))
-
 if __name__ == "__main__":
     main()
 
@@ -152,10 +133,9 @@ def createmachine():
     return jsonify({'message' : 'New machine created!'})
 
 @app.route('/machine', methods=['DELETE'])   
-@token_required
 def deletemachine(current_user):
     data = request.get_json()
-    maq = machine.query.filter_by(machine=data['machine']).first()
+    maq = Machine.query.filter_by(machine=data['machine']).first()
     if not maq:
         return jsonify({'message' : 'No machine found!'})
     db.session.delete(maq)
@@ -165,7 +145,7 @@ def deletemachine(current_user):
 @app.route('/addmachine', methods=['PUT']) 
 def addmachine():
     data = request.get_json()
-    machine = machine.query.filter_by(machine=data['mach']).first()
+    machine = Machine.query.filter_by(machine=data['mach']).first()
     if not machine:
         return jsonify({'message' : 'No machine found!'})
     hist = Historico.query.filter_by(name=data['histo']).first()
@@ -216,13 +196,20 @@ def addRole():
 
 #users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
-@app.route('/reseted', methods=["POST"])
-def reseted():
+@app.route('/reset_password', methods=['GET', 'POST'])
+def resetpwd():
     form = RequestResetForm()
+    return render_template('resetpassword.html', form=form)
+
+
+# Reset password (POSTTTTTT)
+@app.route('/reseted', methods=['POST'])
+def reseted():
+    email = request.form.get('email')
     try:
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=email).first()
     except:
-        return render_template('password_reset_email.html', form=user.email)
+        return render_template('resetpassword.html', form=email)
          
     if user:
         s = URLSafeTimedSerializer('Thisisasecret!')
@@ -231,12 +218,8 @@ def reseted():
         link = url_for('reset_with_token', token=token, _external=True)
         msg.body = 'Your link to new password is {}'.format(link)
         mail.send(msg)
-    else:
-        flash('Your email address must be confirmed before attempting a password reset.', 'error')
-        return redirect(url_for('users.login'))
     return jsonify({'Result' : True})
  
-
 
 @app.route('/confirm_email/<token>', methods=["GET", "POST"])
 def reset_with_token(token):
@@ -261,3 +244,16 @@ def reset_with_token(token):
         return render_template('404.html')
  
     return render_template('newpassword.html', form=form, token=token)
+
+# After the email has been sended
+@app.route('/new_password/<token>', methods=['GET', 'POST'])
+def newpwd(token):
+    form = ResetPasswordForm()
+    return render_template('newpassword.html', form=form)
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.passowrd.data)
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! Now you are able to log in')
+        return redirect(url_for('login'))
+
