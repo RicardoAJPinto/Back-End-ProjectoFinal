@@ -39,34 +39,52 @@ def machines():
     json_size = len(requestpost["DetectOS"])
     print(json_size)
     return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
-    #return render_template('dashboard/Inspirationexample.html', APIcall=requestpost, json_size=json_size)
+    
 
-@app.route('/reloads')
-@login_required
-def reload_test():
-    form = UpdateAccountForm()
-    if form.validate_on_submit():
-        test = Test.query.filter_by(id=current_user.test_id).first()
-        if not test.DetectOS == form.DetectOS:
-            test2 = Test.query.filter_by(DetectOS=form.DetectOS)
-            if not test2:
-                test = Test(DetectOS=DetectOS)
-                db.session.add(test) 
-                db.session.commit()
-        try:
-            current_user.test_id = test.id
-            db.session.commit()
-        except:
-            abort(404)
-    return jsonify({'Scan_added': True}), 201
+# if request.method == 'GET':
+#     xxx
+# elif request.method == 'POST':
+
+@app.route('/receiver', methods = ['GET','POST'])
+def worker():
+    if not request.json:
+        abort(400)
+    print(request.json)
+    return json.dumps(request.json)
+    
 
 @app.route('/create1', methods=['POST'])
 def create1():
-    test = Test(DetectOS=True, AV=False)
+    if not request.json:
+        abort(400)
     
-    db.session.add(test) 
-    db.session.commit() 
-    return jsonify({'Scan_added':True}), 201
+    jsonObjectInfo = request.json
+    print(type(jsonObjectInfo))
+    print(jsonObjectInfo)
+
+    print("Array is {0}".format(jsonObjectInfo['checkedItems']))
+    #If more scans or more buttons are added, add this:
+    # size = len(jsonObjectInfo['checkedItems'])
+    # print(size)
+
+    if len(jsonObjectInfo['checkedItems']) == 1:
+        test = Test(**{DetectOS:True}, **{NewScan:False} )
+        db.session.add(test) 
+        db.session.commit()
+    else:
+        size = 1
+        for i in range(size):
+            ActivatedDet = jsonObjectInfo['checkedItems'][i]
+            ActivatedNew = jsonObjectInfo['checkedItems'][i+1]
+            print(ActivatedDet)
+            print(ActivatedNew)
+            #Gets the activated test and put it on DB
+            # Same as (**{DetectOS:True}, **{NewScan:True} )
+            test = Test(**{ActivatedDet:True}, **{ActivatedNew:True} )
+            db.session.add(test) 
+            db.session.commit()
+            return jsonify({'Scan_added':True}), 201
+
 
 @app.route('/reload', methods=['GET'])
 def reload_agent():
@@ -82,13 +100,15 @@ def reload_agent():
     message_user = user_id.decode('utf8')
 
     user = User.query.filter_by(api_key=message_user).first()
-    if not user:
-        abort(400)
-    test = Test.query.filter_by(id=user.test_id).first()
+    # if not user:
+    #     abort(400)
+    #test = Test.query.filter_by(id=user.test_id).first()
+    test = Test.query.filter_by(id=Test.id).first()
     payload2 = {}
     payload2["DetectOS:"] = test.DetectOS
-    print(test.AV)
-    payload2["AV:"] = test.AV
+    print(test.DetectOS)
+    payload2["NewScan:"] = test.NewScan
+    print(test.NewScan)
 
     payload = json.dumps(payload2)
     return payload

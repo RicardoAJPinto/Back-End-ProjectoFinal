@@ -4,7 +4,6 @@ from platform import linux_distribution, uname
 import sys
 import json 
 
-
 def OperatingSystem():
   payload_zeus = {}
   if linux_distribution()[1] == ' ':

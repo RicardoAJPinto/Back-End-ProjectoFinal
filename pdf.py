@@ -29,7 +29,7 @@ def generate_pdf(hist_id):
         )
     document.write('test-1.docx')
 
-    msg = Message('Zeus Report', sender='ricardoajpinto@gmail.com', recipients=[user.email])
+    msg = Message('Zeus Report', sender='zeusnoreply@gmail.com', recipients=[user.email])
     with app.open_resource("test-1.docx") as fp:
         msg.attach("test-1.docx", "txt/docx", fp.read())
     mail.send(msg)

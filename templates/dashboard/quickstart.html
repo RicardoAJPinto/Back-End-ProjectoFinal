@@ -10,23 +10,46 @@ Quick Start
 
 {% block script %} 
 <script> 
-document.addEventListener('DOMContentLoaded', function main(e) {    
+document.addEventListener('DOMContentLoaded', function main(e) {  
+
+
+  // <form method="post" action="/upload" enctype=multipart/form-data>
+  //         <input type="file" name="file">
+  //         <input type="submit" value="Upload">
+  //       </form>
+
+
+  // $('#Upload').on('click', function(event) {
+  //   var form = document.getElementById('upload')
+
+
+  //   var formData = new FormData(form);
+  //   formData.append('file', file);
+    
+  //   // var formData = new FormData(form);
+  //   // formData.append("thefile", file);
+  //   var xhr = new XMLHttpRequest();
+  //     xhr.open("POST", "upload" , true);
+  //     xhr.send(formData);
+  // });
+
   $('#get-checked-data').on('click', function(event) {
       event.preventDefault(); 
       
-      var checkedItems = {}, counter=0;
+      var checkedItems = [], counter=0;
       
       //alert(document.querySelectorAll('input[type="checkbox"]:checked').length);
       checks = document.querySelectorAll('input[type="checkbox"]:checked').length
       if(checks == 0) alert("You haven't select any configuration... Maybe, just maybe you wanna do it!");
       $(document.getElementById("Checkbox").checked == true).each(function() {
         for (var i=0; i<checks; i++){
-          checkedItems[i] = document.getElementById("TypeOfTest"+i).value;
+          checkedItems.push(document.getElementById("TypeOfTest"+i).value);
+          //console.log(checkedItems)
        }
       });
       
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", "receiver" , true);
+      xhr.open("POST", "create1" , true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify({
         checkedItems
@@ -172,7 +195,7 @@ input:checked + .slider:before {
           <div class="input-group-prepend">
             <div class="input-group-text">
               <label class="switch">
-                <input type="checkbox" id="Checkbox" value="DetectOS">
+                <input type="checkbox" id="Checkbox">
                 <span class="slider round"></span>
               </label>
             </div>
@@ -185,16 +208,23 @@ input:checked + .slider:before {
           <div class="input-group-prepend">
             <div class="input-group-text">
               <label class="switch">
-                <input type="checkbox" id="Checkbox" value="Anti-virus">
+                <input type="checkbox" id="Checkbox">
                 <span class="slider round"></span>
               </label>
             </div>
           </div>
-          <input type="text" class="form-control" id="TypeOfTest1" value="Anti-virus" readonly> 
+          <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
         </div>
-        <p>Gets the state of the anti-virus(If is running) </p>
+        <p>Here you can activate your added scan </p>
+        <p>First, add your scan with this rules: função com run() sadasd Meter aqui um scan exemplo</p>
         
+        
+        <form method="post" action="/upload" enctype=multipart/form-data>
+          <input type="file" name="file">
+          <input type="submit" value="Upload" id="Upload">
+        </form>
 
+        
         <button class="btn btn-primary col-xs-12" id="get-checked-data">Activate the agent configuration</button>
         <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-download-tab').click();" >
             Next

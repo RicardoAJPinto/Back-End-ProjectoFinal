@@ -32,36 +32,6 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 {% endblock %}
 
 {% block content %}
-
-<H1>DELETE MACHINE</H1>
-<form method="DELETE" action="" enctype="multipart/form-data">
-  {{ form.hidden_tag() }}
-  <fieldset class="form-group">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-          <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <!-- <strong>Title</strong> --> {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-      {% endwith %}
-
-      <legend class="border-bottom mb-4">Machine Info</legend>
-      <div class="form-group">
-              {{ form.machine.label(class="form-control-label") }}
-              {{ form.machine(class="form-control form-control-lg") }}
-      </div>
-
-  </fieldset>
-  <div class="form-group">
-      {{ form.submit(class="btn btn-danger btn-block") }}
-  </div>
-</form>
-
-
 <div class="card mb-3">
     <div class="card-header">
       <div class="row"> 

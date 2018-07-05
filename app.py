@@ -16,6 +16,7 @@ from flask_admin import Admin ,BaseView, expose
 from flask_admin.base import Admin, AdminIndexView, BaseView, MenuLink, expose
 from flask_mail import Mail, Message
 import flask_login
+from werkzeug.utils import secure_filename
 
 # Create app
 app = Flask(__name__)
@@ -36,7 +37,6 @@ admin = Admin(app)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-mail = Mail(app)
 # class MyAdminIndexView(admin.AdminIndexView):
     
 #     @expose('/')
@@ -57,6 +57,7 @@ mail = Mail(app)
 # OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+mail = Mail(app)
 # Authentication via other platforms
 from OAuth import *
 # Admin page

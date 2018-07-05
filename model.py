@@ -20,10 +20,9 @@ class Role(db.Model, RoleMixin):
 class Test(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     DetectOS = db.Column(db.Boolean(), nullable=False)
-    AV = db.Column(db.Boolean(), nullable=False)
+    NewScan = db.Column(db.Boolean(), nullable=False)
     history = db.relationship('Historic', backref='TestHist')
     user = db.relationship('User', backref='test')
-
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,13 +59,6 @@ class Machine(db.Model, UserMixin):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     machine_id = db.Column(db.String(255), unique=True)
     history = db.relationship('Historic', backref='owner')
-
-# class Test(db.Model, RoleMixin):
-#     id = db.Column(db.Integer(), primary_key=True)
-#     DetectOS = db.Column(db.Boolean(), nullable=False)
-#     # AV = db.Column(db.Boolean(), nullable=False)
-#     history = db.relationship('Historic', backref='TestHist')
-#     user = db.relationship('User', backref='test')
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
