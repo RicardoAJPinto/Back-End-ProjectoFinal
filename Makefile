@@ -44,7 +44,7 @@ db/create/er:
 	pipenv run eralchemy -i postgresql://$(DBUSER):$(DBPASS)@localhost/$(DBNAME) -o ER.png
 
 flask/dev:
-	FLASK_ENV=development python app.py
+	FLASK_ENV=development python flask/app.py
 
 flask/prod:
-	FLASK_ENV=production python app.py
+	FLASK_ENV=production python flask/app.py

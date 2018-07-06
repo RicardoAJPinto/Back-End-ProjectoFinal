@@ -32,39 +32,42 @@ s = URLSafeTimedSerializer('Thisisasecret!')
 # Create databas and admin page connection object
 db = SQLAlchemy(app)
 db.init_app(app)
-admin = Admin(app)
-#login = LoginManager(app)
-login_manager = flask_login.LoginManager()
+
+# login = LoginManager(app)
+login_manager = LoginManager()
+login_manager.login_view = 'github.login'
 login_manager.init_app(app)
 
-# class MyAdminIndexView(admin.AdminIndexView):
-    
+# class MyAdminIndexView(AdminIndexView):    
 #     @expose('/')
 #     def index(self):
-#         if not login.current_user.is_authenticated():
+#         if not current_user.is_authenticated:
 #             return redirect(url_for('.login_view'))
-#         return super(MyAdminIndexView, self).index()
-# ,  index_view=MyAdminIndexView()
+#         return super( (MyAdminIndexView, self).index(),  index_view = MyAdminIndexView() )
+
+
 # @login.user_loader
 # def load_user(user_id):
 #     return User.query.get(user_id)
 
-# class MyAdminIndexView(AdminIndexView):
-#     def is_accessible(self):
-#         return  current_user.is_authenticated and current_user.has_role('admin')
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return  current_user.is_authenticated and current_user.has_role('admin')
 
-# admin = Admin(app, index_view=MyAdminIndexView())
+#and current_user.has_role('admin')
+admin = Admin(app, index_view=MyAdminIndexView())
+
 # OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 mail = Mail(app)
+
 # Authentication via other platforms
 from OAuth import *
 # Admin page
 from AdminPage import *
 
 from views import *
-#from token import *
 from api import * 
 from pdf import *
 

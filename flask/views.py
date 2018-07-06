@@ -7,7 +7,6 @@ from forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from zipfile import ZipFile
 import os
 from smtp import *
-from JsonWebToken import *
 import itsdangerous
 
 @app.route('/')
@@ -24,7 +23,6 @@ def perfil():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         current_user.email = form.email.data 
-        # current_user.api_key = form.email.api_key 
         db.session.commit()
         flash('Your account has been updated', 'success')
         return redirect(url_for('perfil'))
@@ -172,7 +170,6 @@ def createRole():
     return jsonify({'message' : 'New role created!'})
 
 @app.route('/role', methods=['DELETE'])   
-@token_required
 def deleteRole(current_user):
     data = request.get_json()
     role = Role.query.filter_by(name=data['name']).first()
