@@ -35,15 +35,15 @@ def generate_pdf(historic):
 
         document.merge(
             Date='{:%d-%b-%Y}'.format(date.today()),
-            ClientAddress= 'Lá na zona',
+            ClientAddress= 'Tomar',
             System= hist.dataos['system'],
-            DestinyName= 'Lá na zona',
-            CompanyName= 'Tree',
+            DestinyName= 'IPT - Instituto Politécnico de Tomar',
+            CompanyName= 'IPT',
             Node= hist.dataos['node'],
             Version= hist.dataos['version'],
             Processor= hist.dataos['processor'],
             SO= hist.dataos['system'],
-            ClientName= 'Lá na zona',
+            ClientName= '_________________',
             Release= hist.dataos['release']
             )
         document.write('test-1.docx')

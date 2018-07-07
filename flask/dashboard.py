@@ -6,17 +6,17 @@ from forms import DeleteMachineForm
 from model import *
 import json 
 from pdf import generate_pdf
-
+ 
 @app.route('/quickstart')
 @login_required
 def quickstart():
     return render_template('dashboard/quickstart.html')
-
+ 
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('dashboard/dashboard.html')
-
+ 
 @app.route('/machines_del', methods=['POST'])
 def machines_del():
     mach = request.form.get('machine_id')
@@ -27,7 +27,7 @@ def machines_del():
     db.session.delete(machine)
     db.session.commit()
     return redirect(url_for('perfil'))
-
+ 
 @app.route('/machines')
 @login_required
 def machines():
@@ -36,23 +36,23 @@ def machines():
     url = 'http://127.0.0.1:5000/api/scans' # Local
     #insertAPIkey = str(current_user.api_key)
     #headers= { "x-api-key": insertAPIkey} 
-
+ 
     requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
-
+ 
     return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
     
-
+ 
 # if request.method == 'GET':
 #     xxx
 # elif request.method == 'POST':
-
+ 
 @app.route('/receiver', methods = ['GET','POST'])
 def worker():
     test = Test(DetectOS=True,NewScan = True)
     db.session.add(test) 
     db.session.commit()
     return true
-    
+
 
 @app.route('/create1', methods=['POST'])
 def create1():
@@ -62,12 +62,12 @@ def create1():
     jsonObjectInfo = request.json
     print(type(jsonObjectInfo))
     print(jsonObjectInfo)
-
+ 
     print("Array is {0}".format(jsonObjectInfo['checkedItems']))
     #If more scans or more buttons are added, add this:
     # size = len(jsonObjectInfo['checkedItems'])
     # print(size)
-
+ 
     if len(jsonObjectInfo['checkedItems']) == 1:
         test = Test(**{DetectOS:True}, **{NewScan:False} )
         db.session.add(test) 
@@ -87,6 +87,7 @@ def create1():
             return jsonify({'Scan_added':True}), 201
 
 
+
 @app.route('/reload', methods=['GET'])
 def reload_agent():
     with open('keye.pem', mode='rb') as privfile:
@@ -99,7 +100,7 @@ def reload_agent():
     message_id = base64.b64decode(usernode)
     user_id = rsa.decrypt(message_id, priv_key)
     message_user = user_id.decode('utf8')
-
+ 
     user = User.query.filter_by(api_key=message_user).first()
     # if not user:
     #     abort(400)
@@ -110,6 +111,6 @@ def reload_agent():
     print(test.DetectOS)
     payload2["NewScan:"] = test.NewScan
     print(test.NewScan)
-
+ 
     payload = json.dumps(payload2)
     return payload
