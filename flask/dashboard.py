@@ -38,6 +38,7 @@ def machines():
     #headers= { "x-api-key": insertAPIkey} 
 
     requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
+
     return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
     
 
@@ -47,10 +48,10 @@ def machines():
 
 @app.route('/receiver', methods = ['GET','POST'])
 def worker():
-    if not request.json:
-        abort(400)
-    print(request.json)
-    return json.dumps(request.json)
+    test = Test(DetectOS=True,NewScan = True)
+    db.session.add(test) 
+    db.session.commit()
+    return true
     
 
 @app.route('/create1', methods=['POST'])
@@ -93,7 +94,7 @@ def reload_agent():
         priv_key = rsa.PrivateKey.load_pkcs1(keydata)
     
     if not 'user-id' in request.headers:
-        abort(400)
+        abort(401)
     usernode = request.headers.get('user-id')
     message_id = base64.b64decode(usernode)
     user_id = rsa.decrypt(message_id, priv_key)

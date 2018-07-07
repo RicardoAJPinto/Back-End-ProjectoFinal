@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
+    api_key = db.Column(db.String(255))#UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
     confirmed_at = db.Column(db.DateTime())
     machine = db.relationship('Machine', backref='owner')
     history = db.relationship('Historic', backref='User')
@@ -55,6 +56,7 @@ class Historic(db.Model, RoleMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
     dataos = db.Column(JSONType)
+    
 
 class Machine(db.Model, UserMixin): 
     id = db.Column(db.Integer, primary_key=True)

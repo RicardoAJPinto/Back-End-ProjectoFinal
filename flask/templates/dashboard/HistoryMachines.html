@@ -144,12 +144,6 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 </span>
                 {{ APIcall[i]["machine_id"] }}
               </a>
-              <a class="list-group-item list-group-item-action"> 
-                <span class="badge badge-pill badge-light">
-                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
-                </span>
-                <a href="{{ url_for('generate_pdf',historic = {{ APIcall[i]["id"] }}) }}">stats</a>
-              </a>
         </div>
       </div>
       {% endfor %}

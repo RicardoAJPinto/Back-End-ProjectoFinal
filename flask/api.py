@@ -7,6 +7,7 @@ from flask import jsonify, url_for, abort, request, render_template, redirect, u
 from model import User
 from model import Historic, Machine
 from pdf import generate_pdf
+import requests
 import ast
 import rsa
 import base64
@@ -127,14 +128,14 @@ def post_scan():
         priv_key = rsa.PrivateKey.load_pkcs1(keydata)
     
     if not 'user-id' in request.headers:
-        abort(400)
+        abort(401)
     usernode = request.headers.get('user-id')
     message_id = base64.b64decode(usernode)
     user_id = rsa.decrypt(message_id, priv_key)
     message_user = user_id.decode('utf8')
 
     if not 'machine-id' in request.headers:
-        abort(400)
+        abort(402)
     
     machinenode = request.headers.get('machine-id')
     machine_message = base64.b64decode(machinenode)
@@ -175,7 +176,7 @@ def post_scan():
     mach = Machine.query.filter_by(machine_id=message_machine).first()
     user = User.query.filter_by(api_key=message_user).first()
     if not user:
-        abort(404)
+        abort(403)
 
     if not mach:
         mach = Machine(owner_id=user.id, machine_id=message_machine)
@@ -184,14 +185,28 @@ def post_scan():
         mach = Machine.query.filter_by(machine_id=message_machine).first()  
 
     result = Historic(machine_id = mach.id, user_id=user.id, test_id=user.test_id)
+
     result.dataos = new_scan
     db.session.add(result) 
     db.session.commit()
+    ide = result.id
     #pdf=Historic.query.filter_by(id=result.id).first()
-    generate_pdf(new_scan)
-    return jsonify({'Scan_added': new_scan}), 201
+    # url = 'http://127.0.0.1:5000/generate_pdf/' + str(result.id-1)
+    # requestpost = requests.post(url)
+    print(result.id)
+    #r = requests.post('http://127.0.0.1:5000/generate_pdf/<historic>', historic=ide)
+    #r=redirect(url_for('generate_pdf', historic=result.id))
+    if not 'machine' or not 'version' in request.json:
+        return jsonify({'result': True})
+    return redirect(url_for('generate_pdf',historic=ide))
+    #url = "http://127.0.0.1:5000/generate_pdf/<historic>/", historic=ide
+    #r=requests.post("http://127.0.0.1:5000/generate_pdf/<historic>/", historic=ide)
+    # print(r)
+    # print(r)
+    # print(r)
+    # return jsonify({'Scan_added': new_scan}), 201
 
-# Update a parameter passing the id on the route ################################## NOT GOOD
+# Update a parameter passing the  id on the route ################################## NOT GOOD
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
 def update_scan(scan_id):
     #scan = [scan for scan in DetectOS if scan['id'] == scan_id]

@@ -6,6 +6,7 @@ from forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm
 # importing required modules for zip
 from zipfile import ZipFile
 import os
+from pdf import *
 from smtp import *
 import itsdangerous
 
@@ -119,7 +120,7 @@ def page_not_found(e):
 @app.route('/hist', methods=['POST'])
 def createhist():
     data = request.get_json()
-    hist = Historico(owner_id=data['owner'], name=data['name'], resultado=data['resultado'])
+    hist = Historic(owner_id=data['owner'], name=data['name'], resultado=data['resultado'])
     db.session.add(hist) 
     db.session.commit()  
     return jsonify({'message' : 'New hist created!'})
