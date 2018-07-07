@@ -32,6 +32,43 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 {% endblock %}
 
 {% block content %}
+
+<form method="POST" action="/machines_del" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <fieldset class="form-group">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <!-- <strong>Title</strong> --> {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+      {% endwith %}
+
+      <div class="form-group">
+          {{ form.machine_id.label(class="form-control-label") }}
+          {% if form.machine_id.errors %}
+              {{ form.machine_id(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                  {% for error in form.machine_id.errors %}
+                      <span>{{ error }}</span>
+                  {% endfor %}
+              </div>
+          {% else %}
+              {{ form.machine_id(class="form-control form-control-lg") }}
+          {% endif %}
+      </div>
+        <div class="form-group">
+          {{ form.submit(class="btn btn-danger btn-block") }}
+        </div>
+  </fieldset>
+
+</form>
+
+
 <div class="card mb-3">
     <div class="card-header">
       <div class="row"> 
@@ -55,27 +92,27 @@ document.addEventListener('DOMContentLoaded', function main(e) {
         <div class="col-lg-4 mb-4">
           <div class="card h-100">
             <h3 class="card-header text-center">
-              <span class="badge badge-pill badge-primary"><i class="fa fas fa-desktop"></i></span> {{ APIcall["DetectOS"][i]["node"] }}              
+              <span class="badge badge-pill badge-primary"><i class="fa fas fa-desktop"></i></span> {{ APIcall[i]["node"] }}              
             </h3>
 
             <a class="list-group-item list-group-item-action">
               <span class="badge badge-pill badge-light">
                   <h3>
-                    {% if (APIcall["DetectOS"][i]["system"] == "Windows") %}
+                    {% if (APIcall[i]["system"] == "Windows") %}
                       <i class="fa fab fa-windows"></i>  
                     {% endif %} 
-                    {% if (APIcall["DetectOS"][i]["system"] == "Linux") %}
+                    {% if (APIcall[i]["system"] == "Linux") %}
                       <i class="fa fab fa-linux"></i> 
                     {% endif %}
 
-                    {% if (APIcall["DetectOS"][i]["system"] == "Apple") %}                                       
+                    {% if (APIcall[i]["system"] == "Apple") %}                                       
                     <i class="fa fab fa-apple"></i>
                     {% endif %} 
                   </h3> 
               </span>
-              {{ APIcall["DetectOS"][i]["system"] }}
+              {{ APIcall[i]["system"] }}
               
-              {{ APIcall["DetectOS"][i]["release"] }}
+              {{ APIcall[i]["release"] }}
             </a>
 
             <a class="list-group-item list-group-item-action"> 
@@ -83,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 <h3><i class="fa fas fa-history"></i> </h3> 
               </span>
               Version:
-              {{ APIcall["DetectOS"][i]["version"] }}
+              {{ APIcall[i]["version"] }}
             </a>
 
             <a class="list-group-item list-group-item-action"> 
@@ -91,19 +128,28 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 <h3> <i class="fa fab fa-connectdevelop"></i></h3> 
               </span> 
               Architecture:
-              {{ APIcall["DetectOS"][i]["machine"] }}
+              {{ APIcall[i]["machine"] }}
             </a>
 
             <a class="list-group-item list-group-item-action"> 
               <span class="badge badge-pill badge-light">
                 <h3> <i class="fa fas fa-microchip"></i> </h3> 
               </span>
-              {{ APIcall["DetectOS"][i]["processor"] }}
+              {{ APIcall[i]["processor"] }}
             </a>
-            
-            <div class="card-footer text-center">
-              <a href="#" class="btn btn-primary">Learn More</a>
-            </div>
+
+            <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
+                </span>
+                {{ APIcall[i]["machine_id"] }}
+              </a>
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
+                </span>
+                <a href="{{ url_for('generate_pdf',historic = {{ APIcall[i]["id"] }}) }}">stats</a>
+              </a>
         </div>
       </div>
       {% endfor %}

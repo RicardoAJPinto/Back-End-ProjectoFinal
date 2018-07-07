@@ -35,7 +35,6 @@ Flask-Social
 Flask-SQLAlchemy
 Flask-SSLify
 Flask-WTF
-functools32
 future
 futures
 gevent

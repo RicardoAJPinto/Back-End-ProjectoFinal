@@ -1,9 +1,11 @@
 from views import *
 from app import app
+from api import *
 import requests
 from forms import DeleteMachineForm
 from model import *
 import json 
+from pdf import generate_pdf
 
 @app.route('/quickstart')
 @login_required
@@ -15,29 +17,27 @@ def quickstart():
 def dashboard():
     return render_template('dashboard/dashboard.html')
 
+@app.route('/machines_del', methods=['POST'])
+def machines_del():
+    mach = request.form.get('machine_id')
+    print(mach)
+    machine = Machine.query.filter_by(machine_id=mach).first()
+    if not machine:
+        abort(404)
+    db.session.delete(machine)
+    db.session.commit()
+    return redirect(url_for('perfil'))
+
 @app.route('/machines')
 @login_required
 def machines():
-    # get_machines = request.get_json()
-    # maq = Machine.query.filter_by(machine=get_machines['machine']).first()
     form = DeleteMachineForm()
-    if form.validate_on_submit():
-        # current_user.email = form.email.data 
-        # db.session.commit()
-        flash('The machine has been updated', 'success')
-        return redirect(url_for('perfil'))
-    elif request.method == 'GET':
-        form.machine.data = current_user.email
-        
     #url = 'https://zeus-security.herokuapp.com/api/scans' # Heroku
     url = 'http://127.0.0.1:5000/api/scans' # Local
-    insertAPIkey = str(current_user.api_key)
-    headers= { "x-api-key": insertAPIkey} 
+    #insertAPIkey = str(current_user.api_key)
+    #headers= { "x-api-key": insertAPIkey} 
 
-    requestpost = requests.get(url , headers=headers).json()
-    print(requestpost)
-    json_size = len(requestpost["DetectOS"])
-    print(json_size)
+    requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
     return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
     
 
