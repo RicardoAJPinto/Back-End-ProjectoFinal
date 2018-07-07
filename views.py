@@ -135,7 +135,7 @@ def createmachine():
 @app.route('/machine', methods=['DELETE'])   
 @login_required
 def deletemachine():
-    form = DeleteMachineForm()
+
     maq = Machine.query.filter_by(id=form.machine.data).first()
     if not maq:
         return jsonify({'message' : 'No machine found!'})

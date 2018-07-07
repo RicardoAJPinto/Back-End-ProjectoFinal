@@ -1,13 +1,10 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from model import User
 
-class DeleteMachineForm(FlaskForm):
-    machine = StringField('Machines')
-    submit = SubmitField('Delete machine')
     
 class UpdateAccountForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -37,4 +34,5 @@ class ResetPasswordForm(FlaskForm):
     
 class DeleteMachineForm(FlaskForm):
     machine = StringField('Delete', validators=[DataRequired()])
+    machine_id = IntegerField('Delete', validators=[DataRequired()])
     submit = SubmitField('Delete Machine ')

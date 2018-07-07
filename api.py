@@ -1,4 +1,4 @@
-from app import app, db
+from app import *
 from functools import wraps
 from flask_restful import Resource, Api
 from flask_login import LoginManager, current_user
@@ -6,6 +6,7 @@ from json import dumps
 from flask import jsonify, url_for, abort, request, render_template, redirect, url_for
 from model import User
 from model import Historic, Machine
+from pdf import generate_pdf
 import ast
 import rsa
 import base64
@@ -69,15 +70,28 @@ def generate_keytest():
 # encode - decode -
 # Get all the scans
 @app.route('/api/scans', methods=['GET'])
-@require_appkey
-def get_scans(user):
-    return jsonify({'DetectOS': [make_public_DetectOS(scan) for scan in DetectOS]})
+@login_required
+def get_scans():
+    # mach = Machine.query.filter_by(owner_id=current_user.id).all()
+    
+    # if not mach:
+    #     abort(404)
+    payload = []
+    count = 0
+    # for machine in mach:
+    hist = Historic.query.filter_by(user_id=current_user.id).all()
+    if hist:
+        for data in hist:
+            count=count+1
+            payload.append(data.dataos)
+    # requestpost = jsonify({[payload]})
+    return payload, count#jsonify({'DetectOS': [hist for scan in hist.dataos]})
 
 # Get the scan passing the ID on the route
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
     result = Historic.query.filter_by(id=scan_id).first()
-    if not scan:
+    if not result:
         return jsonify({'message' : 'No scan found!'})
     out = {}
     out['id'] = result.id
@@ -111,7 +125,7 @@ def post_scan():
     machine_message = base64.b64decode(machinenode)
     machineid = rsa.decrypt(machine_message, priv_key)
     message_machine = machineid.decode('utf8')
-    print(message_machine)
+    #print(message_machine)
 
     # If already exists the machine:
     # exists = Machine.query.filter_by(machine_id=message_machine).first()
@@ -122,9 +136,9 @@ def post_scan():
 
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)
-    
+
     new_scan = {
-        'id': DetectOS[-1]['id'] + 1,  
+        'id': message_machine,  
         'machine': request.json.get('machine', ""),
         'node': request.json.get('node', ""),
         'processor': request.json.get('processor', "" ),
@@ -133,21 +147,25 @@ def post_scan():
         'version': request.json['version']
     }
     DetectOS.append(new_scan)
-    print(message_machine)
-    print(message_user)
+    # print(message_machine)
+    # print(message_user)
     mach = Machine.query.filter_by(machine_id=message_machine).first()
     user = User.query.filter_by(api_key=message_user).first()
     if not user:
-        abort(500)
-    if not mach: 
-        hist = Machine(owner_id=user.id, machine_id=message_machine)
-        db.session.add(hist) 
+        abort(404)
+
+    if not mach:
+        mach = Machine(owner_id=user.id, machine_id=message_machine)
+        db.session.add(mach) 
         db.session.commit()
         mach = Machine.query.filter_by(machine_id=message_machine).first()  
-    result = Historic(machine_id = mach.id)
+
+    result = Historic(machine_id = mach.id, user_id=user.id, test_id=user.test_id)
     result.dataos = new_scan
     db.session.add(result) 
     db.session.commit()
+    #pdf=Historic.query.filter_by(id=result.id).first()
+    generate_pdf(new_scan)
     return jsonify({'Scan_added': new_scan}), 201
 
 # Update a parameter passing the id on the route ################################## NOT GOOD

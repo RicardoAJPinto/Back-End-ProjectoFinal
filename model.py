@@ -31,8 +31,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
-    api_key = db.Column(UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
     machine = db.relationship('Machine', backref='owner')
+    history = db.relationship('Historic', backref='User')
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'), default=1)
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('userRole', lazy='dynamic'))
@@ -52,6 +52,7 @@ class OAuth(OAuthConsumerMixin, db.Model):
 class Historic(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     machine_id = db.Column(db.Integer, db.ForeignKey('machine.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
     dataos = db.Column(JSONType)
 
@@ -60,13 +61,6 @@ class Machine(db.Model, UserMixin):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     machine_id = db.Column(db.String(255), unique=True)
     history = db.relationship('Historic', backref='owner')
-
-# class Test(db.Model, RoleMixin):
-#     id = db.Column(db.Integer(), primary_key=True)
-#     DetectOS = db.Column(db.Boolean(), nullable=False)
-#     # AV = db.Column(db.Boolean(), nullable=False)
-#     history = db.relationship('Historic', backref='TestHist')
-#     user = db.relationship('User', backref='test')
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)

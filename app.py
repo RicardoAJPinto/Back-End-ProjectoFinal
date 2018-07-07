@@ -49,14 +49,14 @@ mail = Mail(app)
 # def load_user(user_id):
 #     return User.query.get(user_id)
 
-# class MyAdminIndexView(AdminIndexView):
-#     def is_accessible(self):
-#         return  current_user.is_authenticated and current_user.has_role('admin')
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return  current_user.is_authenticated and current_user.has_role('admin')
 
-# admin = Admin(app, index_view=MyAdminIndexView())
+admin = Admin(app, index_view=MyAdminIndexView())
 # OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
+mail = Mail(app)
 # Authentication via other platforms
 from OAuth import *
 # Admin page
