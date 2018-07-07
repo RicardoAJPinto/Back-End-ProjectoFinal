@@ -6,7 +6,7 @@ from mailmerge import MailMerge
 from datetime import date
 
 
-@app.route('/generate_pdf/<hist_id>', methods=['GET'])
+@app.route('/generate_pdf/<historic>', methods=['GET'])
 def generate_pdf(historic):
     # historic = Historic.query.filter_by(id=hist_id).first()
     # if not historic:
@@ -24,7 +24,10 @@ def generate_pdf(historic):
     #     print(3)
     #     abort(404)
     template = "ReportZeus.docx"
-    document = MailMerge(template)
+    #document = MailMerge(template)
+    with MailMerge("ReportZeus.docx") as document:
+        print(document.get_merge_fields())
+    
     document.merge(
         Date='{:%d-%b-%Y}'.format(date.today()),
         ClientAddress= 'Lá na zona',
@@ -40,11 +43,7 @@ def generate_pdf(historic):
         )
     document.write('test-1.docx')
 
-<<<<<<< HEAD:pdf.py
     msg = Message('Zeus Report', sender='ZeusNoReply@gmail.com', recipients=[user.email])
-=======
-    msg = Message('Zeus Report', sender='zeusnoreply@gmail.com', recipients=[user.email])
->>>>>>> master:flask/pdf.py
     with app.open_resource("test-1.docx") as fp:
         msg.attach("test-1.docx", "txt/docx", fp.read())
     mail.send(msg)

@@ -53,23 +53,11 @@ login_manager.init_app(app)
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return  current_user.is_authenticated and current_user.has_role('admin')
-<<<<<<< HEAD:app.py
 
 admin = Admin(app, index_view=MyAdminIndexView())
 # OAuth config
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 mail = Mail(app)
-=======
-
-#and current_user.has_role('admin')
-admin = Admin(app, index_view=MyAdminIndexView())
-
-# OAuth config
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-mail = Mail(app)
-
->>>>>>> master:flask/app.py
 # Authentication via other platforms
 from OAuth import *
 # Admin page

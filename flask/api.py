@@ -149,20 +149,6 @@ def post_scan():
     #     # url = 'http://127.0.0.1:5000/api/scans'
     #     # requestpost = requests.post(url , json=payload, headers=headers)
 
-<<<<<<< HEAD:api.py
-    if not request.json or not 'system' or not 'version' in request.json:
-        abort(400)
-
-    new_scan = {
-        'id': message_machine,  
-        'machine': request.json.get('machine', ""),
-        'node': request.json.get('node', ""),
-        'processor': request.json.get('processor', "" ),
-        'release': request.json.get('release', ""),
-        'system': request.json['system'],
-        'version': request.json['version']
-    }
-=======
     if not 'machine' or not 'version' in request.json:
         print("Não tenho system e version")
         new_scan = {
@@ -178,10 +164,11 @@ def post_scan():
             'processor': request.json.get('processor', "" ),
             'release': request.json.get('release', ""),
             'system': request.json['system'],
-            'version': request.json['version']
+            'version': request.json['version'],
+            'machine_id': message_machine
+
         }
 
->>>>>>> master:flask/api.py
     DetectOS.append(new_scan)
     # print(message_machine)
     # print(message_user)

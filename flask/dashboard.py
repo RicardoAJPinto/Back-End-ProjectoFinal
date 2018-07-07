@@ -39,34 +39,6 @@ def machines():
 
     requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
     return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
-<<<<<<< HEAD:dashboard.py
-    #return render_template('dashboard/Inspirationexample.html', APIcall=requestpost, json_size=json_size)
-    #return render_template('dashboard/Inspirationexample.html', APIcall=requestpost, json_size=json_size)
-
-# @app.route('/reloads')
-# @login_required
-# def reload_test():
-#     form = UpdateAccountForm()
-#     if form.validate_on_submit():
-#         test = Test.query.filter_by(id=current_user.test_id).first()
-#         if not test.DetectOS == form.DetectOS:
-#             test2 = Test.query.filter_by(DetectOS=form.DetectOS)
-#             if not test2:
-#                 test = Test(DetectOS=DetectOS)
-#                 db.session.add(test) 
-#                 db.session.commit()
-#         try:
-#             current_user.test_id = test.id
-#             db.session.commit()
-#         except:
-#             abort(404)
-#     return jsonify({'Scan_added': True}), 201
-
-@app.route('/create1', methods=['POST'])
-def create1():
-
-    test = Test(DetectOS=True, AV=False)
-=======
     
 
 # if request.method == 'GET':
@@ -85,7 +57,6 @@ def worker():
 def create1():
     if not request.json:
         abort(400)
->>>>>>> master:flask/dashboard.py
     
     jsonObjectInfo = request.json
     print(type(jsonObjectInfo))

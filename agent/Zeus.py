@@ -30,7 +30,6 @@ headers["user-id"] = api_file
 
 # def scan():  
 request = requests.get(url_reload, headers=headers)#.json()
-print(request)
 result_scans = request.json()
 
 if result_scans["DetectOS:"] == True:

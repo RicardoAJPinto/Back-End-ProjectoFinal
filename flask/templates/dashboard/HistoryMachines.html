@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 {% endblock %}
 
 {% block content %}
-<<<<<<< HEAD:templates/dashboard/HistoryMachines.html
 
 <form method="POST" action="/machines_del" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
@@ -70,8 +69,6 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 </form>
 
 
-=======
->>>>>>> master:flask/templates/dashboard/HistoryMachines.html
 <div class="card mb-3">
     <div class="card-header">
       <div class="row"> 
@@ -145,7 +142,13 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 <span class="badge badge-pill badge-light">
                   <h3> <i class="fa fas fa-microchip"></i> </h3> 
                 </span>
-                {{ APIcall[i]["id"] }}
+                {{ APIcall[i]["machine_id"] }}
+              </a>
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
+                </span>
+                <a href="{{ url_for('generate_pdf',historic = {{ APIcall[i]["id"] }}) }}">stats</a>
               </a>
         </div>
       </div>
