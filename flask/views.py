@@ -6,8 +6,7 @@ from forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm
 # importing required modules for zip
 from zipfile import ZipFile
 import os
- 
-from JsonWebToken import *
+from smtp import *
 import itsdangerous
 
 @app.route('/')
@@ -24,7 +23,6 @@ def perfil():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         current_user.email = form.email.data 
-        # current_user.api_key = form.email.api_key 
         db.session.commit()
         flash('Your account has been updated', 'success')
         return redirect(url_for('perfil'))
@@ -36,6 +34,9 @@ def perfil():
 
 @app.route('/login')
 def change():
+    test = Test(DetectOS=True, NewScan=True)
+    db.session.add(test)
+    db.session.commit()
     return render_template('security/login_user.html')
 
 from dashboard import *
@@ -57,6 +58,7 @@ def return_file():
         ## Try to delete the file ##
         try:
             os.remove("./agent/Zeus-Agent.zip")
+            #os.remove("./agent/NewScan.py")
         except OSError as e:  ## if failed, report it back to the user ##
             print ("Error: %s - %s." % (e.filename, e.strerror))
 
@@ -168,7 +170,6 @@ def createRole():
     return jsonify({'message' : 'New role created!'})
 
 @app.route('/role', methods=['DELETE'])   
-@token_required
 def deleteRole(current_user):
     data = request.get_json()
     role = Role.query.filter_by(name=data['name']).first()
@@ -191,70 +192,3 @@ def addRole():
     user.roles.append(role)
     db.session.commit()
     return jsonify({'message' : 'Role added to user!'})
-
-
-################################ Reset Password #################################
-
-#users_blueprint = Blueprint('users', __name__, template_folder='templates')
-
-@app.route('/reset_password', methods=['GET', 'POST'])
-def resetpwd():
-    form = RequestResetForm()
-    return render_template('resetpassword.html', form=form)
-
-
-# Reset password (POSTTTTTT)
-@app.route('/reseted', methods=['POST'])
-def reseted():
-    email = request.form.get('email')
-    try:
-        user = User.query.filter_by(email=email).first()
-    except:
-        return render_template('resetpassword.html', form=email)
-         
-    if user:
-        s = URLSafeTimedSerializer('Thisisasecret!')
-        token = s.dumps(user.email, salt='email-confirm')
-        msg = Message('Confirm Email', sender='ZeusNoReply@gmail.com', recipients=[user.email])
-        link = url_for('reset_with_token', token=token, _external=True)
-        msg.body = 'Your link to new password is {}'.format(link)
-        mail.send(msg)
-    return jsonify({'Result' : True})
- 
-
-@app.route('/confirm_email/<token>', methods=["GET", "POST"])
-def reset_with_token(token):
-    try:
-        s = URLSafeTimedSerializer('Thisisasecret!')
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except SignatureExpired:
-        return '<h1>The token is expired!</h1>'
-
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        try:
-            user = User.query.filter_by(email=email).first_or_404()
-        except:
-            flash('Invalid email address!', 'error')
-            return render_template('index.html')
-        #generate_password_hash(form.password.data, method='sha256')
-        user.password = form.password.data
-        db.session.add(user)
-        db.session.commit()
-        flash('Your password has been updated!', 'success')
-        return render_template('404.html')
- 
-    return render_template('newpassword.html', form=form, token=token)
-
-# After the email has been sended
-@app.route('/new_password/<token>', methods=['GET', 'POST'])
-def newpwd(token):
-    form = ResetPasswordForm()
-    return render_template('newpassword.html', form=form)
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.passowrd.data)
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been updated! Now you are able to log in')
-        return redirect(url_for('login'))
-

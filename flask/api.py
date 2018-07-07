@@ -11,6 +11,8 @@ import ast
 import rsa
 import base64
 import json
+import os
+from werkzeug.utils import secure_filename
 
 DetectOS = [
     {
@@ -23,15 +25,28 @@ DetectOS = [
         "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
     },
 ]
+# ################################# File upload Section #################################
+#File upload
+UPLOAD_FOLDER = 'agent/'
+ALLOWED_EXTENSIONS = set(['py'])
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/receiver', methods = ['GET','POST'])
-def worker():
-    if not request.json:
-        abort(400)
-    print(request.json)
-    return json.dumps(request.json)
-    
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    file = request.files['file']
+
+    # Colocar nome com currentuser
+    if file and allowed_file(file.filename):
+        #file.save(os.path.join('agent/', current_user.email + "NewScan.py"  ))
+        file.save(os.path.join('agent/', "NewScan.py"))
+
+    # CHANGE THIS! NO HARDCODE MODE XD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return render_template("dashboard/quickstart.html")
+    # return jsonify({'message' : 'File uploaded!'}), 201
+
 ######################### Decorators #################################
 # API key validation
 def require_appkey(view_function):
@@ -134,6 +149,7 @@ def post_scan():
     #     # url = 'http://127.0.0.1:5000/api/scans'
     #     # requestpost = requests.post(url , json=payload, headers=headers)
 
+<<<<<<< HEAD:api.py
     if not request.json or not 'system' or not 'version' in request.json:
         abort(400)
 
@@ -146,6 +162,26 @@ def post_scan():
         'system': request.json['system'],
         'version': request.json['version']
     }
+=======
+    if not 'machine' or not 'version' in request.json:
+        print("Não tenho system e version")
+        new_scan = {
+            'id': DetectOS[-1]['id'] + 1,  
+            'system': request.json.get('system', ""),
+            'node': request.json.get('node', ""),
+        }
+    else:
+        new_scan = {
+            'id': DetectOS[-1]['id'] + 1,  
+            'machine': request.json.get('machine', ""),
+            'node': request.json.get('node', ""),
+            'processor': request.json.get('processor', "" ),
+            'release': request.json.get('release', ""),
+            'system': request.json['system'],
+            'version': request.json['version']
+        }
+
+>>>>>>> master:flask/api.py
     DetectOS.append(new_scan)
     # print(message_machine)
     # print(message_user)

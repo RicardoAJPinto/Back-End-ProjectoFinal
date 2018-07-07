@@ -9,7 +9,6 @@ import sys
 import json
 import DetectOS
 
-
 with open('public.pem', mode='rb') as pubfile:
   keydata = pubfile.read()
   pub_key = rsa.PublicKey.load_pkcs1(keydata)
@@ -31,9 +30,18 @@ headers["user-id"] = api_file
 
 # def scan():  
 request = requests.get(url_reload, headers=headers)#.json()
+print(request)
 result_scans = request.json()
 
 if result_scans["DetectOS:"] == True:
   result = DetectOS.OperatingSystem()
   requestpost = requests.post(url , json=result, headers=headers)
-print("Done +1 post")
+  print("Done 1st post")
+
+# Scann added
+if result_scans["NewScan:"] == True:
+  import NewScan
+  result1 = NewScan.runscan()
+  requestpost = requests.post(url , json=result1, headers=headers)
+  print("Done 2nd post")
+

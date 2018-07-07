@@ -40,7 +40,11 @@ def generate_pdf(historic):
         )
     document.write('test-1.docx')
 
+<<<<<<< HEAD:pdf.py
     msg = Message('Zeus Report', sender='ZeusNoReply@gmail.com', recipients=[user.email])
+=======
+    msg = Message('Zeus Report', sender='zeusnoreply@gmail.com', recipients=[user.email])
+>>>>>>> master:flask/pdf.py
     with app.open_resource("test-1.docx") as fp:
         msg.attach("test-1.docx", "txt/docx", fp.read())
     mail.send(msg)

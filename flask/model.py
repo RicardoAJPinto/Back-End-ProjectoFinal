@@ -20,10 +20,9 @@ class Role(db.Model, RoleMixin):
 class Test(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     DetectOS = db.Column(db.Boolean(), nullable=False)
-    AV = db.Column(db.Boolean(), nullable=False)
+    NewScan = db.Column(db.Boolean(), nullable=False)
     history = db.relationship('Historic', backref='TestHist')
     user = db.relationship('User', backref='test')
-
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +43,7 @@ class User(db.Model, UserMixin):
 ##########################  OAuth   ##########################
 # OAuthConsumerMixin will generate new parameters to the class
 class OAuth(OAuthConsumerMixin, db.Model):
+    provider_user_id = db.Column(db.String(256), unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
