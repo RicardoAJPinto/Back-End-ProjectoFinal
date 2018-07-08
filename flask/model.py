@@ -7,7 +7,7 @@ from uuid import uuid4
 import sqlalchemy
 from sqlalchemy.dialects.postgresql import UUID
 
-##########################   User && Roles DB   ##########################
+##########################   User && Roles    ##########################
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
@@ -17,19 +17,12 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
-class Test(db.Model, RoleMixin):
-    id = db.Column(db.Integer(), primary_key=True)
-    DetectOS = db.Column(db.Boolean(), nullable=False)
-    NewScan = db.Column(db.Boolean(), nullable=False)
-    history = db.relationship('Historic', backref='TestHist')
-    user = db.relationship('User', backref='test')
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
-    api_key = db.Column(db.String(255))#UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
+    api_key = db.Column(UUID(as_uuid=True), server_default=sqlalchemy.text("uuid_generate_v4()"))
     confirmed_at = db.Column(db.DateTime())
     machine = db.relationship('Machine', backref='owner')
     history = db.relationship('Historic', backref='User')
@@ -41,14 +34,14 @@ class User(db.Model, UserMixin):
     def is_authenticated(self):
         return current_user.is_authenticated()
 
-##########################  OAuth   ##########################
-# OAuthConsumerMixin will generate new parameters to the class
-class OAuth(OAuthConsumerMixin, db.Model):
-    provider_user_id = db.Column(db.String(256), unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    user = db.relationship(User)
 
-##########################  xxxxx   ##########################
+##########################  Scans related   ##########################
+class Test(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    DetectOS = db.Column(db.Boolean(), nullable=False)
+    NewScan = db.Column(db.Boolean(), nullable=False)
+    history = db.relationship('Historic', backref='TestHist')
+    user = db.relationship('User', backref='test')
 
 class Historic(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)

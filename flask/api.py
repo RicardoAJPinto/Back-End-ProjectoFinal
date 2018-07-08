@@ -26,27 +26,6 @@ DetectOS = [
         "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
     },
 ]
-# ################################# File upload Section #################################
-#File upload
-UPLOAD_FOLDER = 'agent/'
-ALLOWED_EXTENSIONS = set(['py'])
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    file = request.files['file']
-
-    # Colocar nome com currentuser
-    if file and allowed_file(file.filename):
-        #file.save(os.path.join('agent/', current_user.email + "NewScan.py"  ))
-        file.save(os.path.join('agent/', "NewScan.py"))
-
-    # CHANGE THIS! NO HARDCODE MODE XD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    return render_template("dashboard/quickstart.html")
-    # return jsonify({'message' : 'File uploaded!'}), 201
 
 ######################### Decorators #################################
 # API key validation
@@ -123,7 +102,7 @@ def get_scanid(scan_id):
 @app.route('/api/scans', methods=['POST'])
 # @require_appkey
 def post_scan():
-    with open('keye.pem', mode='rb') as privfile:
+    with open('flask/keye.pem', mode='rb') as privfile:
         keydata = privfile.read()
         priv_key = rsa.PrivateKey.load_pkcs1(keydata)
     
@@ -190,21 +169,12 @@ def post_scan():
     db.session.add(result) 
     db.session.commit()
     ide = result.id
-    #pdf=Historic.query.filter_by(id=result.id).first()
-    # url = 'http://127.0.0.1:5000/generate_pdf/' + str(result.id-1)
-    # requestpost = requests.post(url)
+
     print(result.id)
-    #r = requests.post('http://127.0.0.1:5000/generate_pdf/<historic>', historic=ide)
-    #r=redirect(url_for('generate_pdf', historic=result.id))
+
     if not 'machine' or not 'version' in request.json:
         return jsonify({'result': True})
     return redirect(url_for('generate_pdf',historic=ide))
-    #url = "http://127.0.0.1:5000/generate_pdf/<historic>/", historic=ide
-    #r=requests.post("http://127.0.0.1:5000/generate_pdf/<historic>/", historic=ide)
-    # print(r)
-    # print(r)
-    # print(r)
-    # return jsonify({'Scan_added': new_scan}), 201
 
 # Update a parameter passing the  id on the route ################################## NOT GOOD
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
@@ -244,12 +214,3 @@ def delete_scan(scan_id):
     db.session.delete(scan)
     db.session.commit()
     return jsonify({'result': True})
-
-def make_public_DetectOS(scan):
-    new_scan = {}
-    for field in scan:
-        if field == 'id':
-            new_scan['uri'] = url_for('get_scans', scan_id=scan['id'], _external=True)
-        else:
-            new_scan[field] = scan[field]
-    return new_scan

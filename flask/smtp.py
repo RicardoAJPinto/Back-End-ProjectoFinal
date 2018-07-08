@@ -45,9 +45,9 @@ def reset_with_token(token):
         user.password = form.password.data
         db.session.add(user)
         db.session.commit()
-        return render_template('404.html')
+        return render_template('newpassword.html', form=form, token=token, message=flash('Your password has been updated!', 'success'))
  
-    return render_template('newpassword.html', form=form, token=token, message=flash('Your password has been updated!', 'success'))
+    return render_template('newpassword.html', form=form, token=token)
 
 # After the email has been sended
 @app.route('/new_password/<token>', methods=['GET', 'POST'])

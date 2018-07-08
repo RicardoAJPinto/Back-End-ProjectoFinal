@@ -3,8 +3,6 @@ from model import *
 from flask import abort, request, send_file, send_from_directory, flash
 from api import *
 from forms import UpdateAccountForm, RequestResetForm, ResetPasswordForm
-# importing required modules for zip
-from zipfile import ZipFile
 import os
 from pdf import *
 from smtp import *
@@ -35,75 +33,9 @@ def perfil():
 
 @app.route('/login')
 def change():
-    test = Test(DetectOS=True, NewScan=True)
-    db.session.add(test)
-    db.session.commit()
     return render_template('security/login_user.html')
 
 from dashboard import *
-
-# Download file
-@app.route('/return-file/')
-def return_file():
-    def get_all_file_paths(directory):
-        # initializing empty file paths list
-        file_paths = []
-
-        # crawling through directory and subdirectories
-        for root, directories, files in os.walk(directory):
-            for filename in files:
-                # join the two strings in order to form the full filepath.
-                filepath = os.path.join(root, filename)
-                file_paths.append(filepath)
-
-        ## Try to delete the file ##
-        try:
-            os.remove("./agent/Zeus-Agent.zip")
-            #os.remove("./agent/NewScan.py")
-        except OSError as e:  ## if failed, report it back to the user ##
-            print ("Error: %s - %s." % (e.filename, e.strerror))
-
-        # returning all file paths
-        return file_paths        
-
-    def zipping():
-        # path to folder which needs to be zipped
-        directory = './agent'
-
-        # calling function to get all file paths in the directory
-        file_paths = get_all_file_paths(directory)
-
-        # printing the list of all files to be zipped
-        print('Following files will be zipped:')
-        for file_name in file_paths:
-            print(file_name)
-
-        # writing files to a zipfile
-        with ZipFile('agent/Zeus-Agent.zip','w') as zip:
-            # writing each file one by one
-            for file in file_paths:
-                zip.write(file)
-
-        print('All files zipped successfully!')    
-    
-    # Insert API key from the authenticated user
-    insertAPIkey = str(current_user.api_key)
-
-    apikey = insertAPIkey.encode('utf8')
-    with open('pubkey.pem', mode='rb') as pubfile:
-        keydata = pubfile.read()
-        pub_key = rsa.PublicKey.load_pkcs1(keydata)
-    encrypted = rsa.encrypt(apikey, pub_key)
-    user_64 = base64.b64encode(encrypted)
-    with open('agent/api.pem', mode='wb') as pubfile:
-        pubfile.write(user_64)
-
-    # Zip files
-    get_all_file_paths('.\repos\Back-End-ProjectoFinal\agent')
-    zipping()
-
-    # Feature to add: Download zip/folder file 
-    return send_from_directory('agent', 'Zeus-Agent.zip', as_attachment=True)
 
 if __name__ == "__main__":
     main()

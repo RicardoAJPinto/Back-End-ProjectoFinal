@@ -46,18 +46,19 @@ def generate_pdf(historic):
             ClientName= '_________________',
             Release= hist.dataos['release']
             )
-        document.write('test-1.docx')
+        with open('test-1.docx', 'rb'):
+            document.write('test-1.docx')
 
     with open('test-1.docx', 'rb') as docx:
         res = requests.post(url='http://converter-eval.plutext.com:80/v1/00000000-0000-0000-0000-000000000000/convert',
                             data=docx,
                             headers={'Content-Type': 'application/octet-stream'})
-        print(res)
+        #print(res)
         f = open('out_request.pdf', 'wb')
-        f.write(res.content)
+        f.write(res.content) 
 
     msg = Message('Zeus Report', sender='zeusnoreply@gmail.com', recipients=[user.email])
-    with app.open_resource("out_request.pdf") as fp:
-        msg.attach("out_request.pdf", "application/pdf", fp.read())
+    with open("out_request.pdf",'rb') as fp:
+        msg.attach("out_request.pdf", "application/pdf", fp.read()) 
     mail.send(msg)
     return render_template('index.html')

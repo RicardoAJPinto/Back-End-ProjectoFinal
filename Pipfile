@@ -102,6 +102,7 @@ rsa = "*"
 "psycopg2-binary" = "*"
 bcrypt = "*"
 gunicorn = "*"
+docx-mailmerge = "*"
 
 [dev-packages]
 eralchemy = "*"
