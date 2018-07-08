@@ -75,6 +75,8 @@ def get_scans():
     count = 0
     # for machine in mach:
     hist = Historic.query.filter_by(user_id=current_user.id).all()
+    
+
     if hist:
         for data in hist:
             count=count+1
@@ -82,7 +84,28 @@ def get_scans():
     # requestpost = jsonify({[payload]})
     return payload, count#jsonify({'DetectOS': [hist for scan in hist.dataos]})
 
-# Get the scan passing the ID on the route
+def get_scans_table():
+
+    payload = []
+    count_all = 0
+    count_win = 0
+    count_lin = 0
+    count = 0
+    mach = Machine.query.filter_by(owner_id=current_user.id).all()
+    hist_all = Historic.query.filter_by(user_id=current_user.id).all()
+    for histo in hist_all:
+        count_all=count_all+1
+        if histo.dataos['system']=='Linux':
+            count_lin = count_lin + 1
+        if histo.dataos['system']=='Windows':
+            count_win = count_win + 1
+    if mach:
+        for data in mach:
+            hist = Historic.query.filter_by(machine_id=data.id).first()
+            if hist:
+                payload.append(hist.dataos)
+                count=count+1
+    return payload, count, count_all, count_win, count_lin
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
     result = Historic.query.filter_by(id=scan_id).first()

@@ -17,7 +17,11 @@ def quickstart():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard/dashboard.html')
+    form = DeleteMachineForm()
+    requestpost, json_size, count, count_win, count_lin = get_scans_table()
+    mach = Machine.query.filter_by(owner_id=current_user.id).distinct()
+    return render_template('dashboard/dashboard.html', form=form, APIcall=requestpost, json_size=json_size, count=count, count_win=count_win, count_lin=count_lin)
+
 
 # ################################# File upload Section #################################
 #File upload
@@ -126,7 +130,7 @@ def machines_del():
 @app.route('/machines')
 @login_required
 def machines():
-    form = DeleteMachineForm()
+
     #url = 'https://zeus-security.herokuapp.com/api/scans' # Heroku
     url = 'http://127.0.0.1:5000/api/scans' # Local
     #insertAPIkey = str(current_user.api_key)
@@ -134,7 +138,7 @@ def machines():
  
     requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
  
-    return render_template('dashboard/HistoryMachines.html', form=form, APIcall=requestpost, json_size=json_size)
+    return render_template('dashboard/HistoryMachines.html', APIcall=requestpost, json_size=json_size)
      
 @app.route('/create1', methods=['POST'])
 def create1():

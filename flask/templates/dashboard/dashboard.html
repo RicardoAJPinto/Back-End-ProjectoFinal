@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 
 
 <div class="container">
-
+<br/>
     <!-- Icon Cards-->
 <div class="row">
     <div class="col-xl-3 col-sm-6 mb-3">
@@ -59,14 +59,9 @@ document.addEventListener('DOMContentLoaded', function main(e) {
           <div class="card-body-icon">
             <i class="fa fa-fw fa-comments"></i>
           </div>
-          <div class="mr-5">26 New Messages!</div>
+          <div class="mr-5">{{ json_size }} Machines!</div>
         </div>
-        <a class="card-footer text-white clearfix small z-1" href="#">
-          <span class="float-left">View Details</span>
-          <span class="float-right">
-            <i class="fa fa-angle-right"></i>
-          </span>
-        </a>
+
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-3">
@@ -75,14 +70,8 @@ document.addEventListener('DOMContentLoaded', function main(e) {
           <div class="card-body-icon">
             <i class="fa fa-fw fa-list"></i>
           </div>
-          <div class="mr-5">11 New Tasks!</div>
+          <div class="mr-5">{{ count }} Reports Done!</div>
         </div>
-        <a class="card-footer text-white clearfix small z-1" href="#">
-          <span class="float-left">View Details</span>
-          <span class="float-right">
-            <i class="fa fa-angle-right"></i>
-          </span>
-        </a>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-3">
@@ -91,14 +80,8 @@ document.addEventListener('DOMContentLoaded', function main(e) {
           <div class="card-body-icon">
             <i class="fa fa-fw fa-shopping-cart"></i>
           </div>
-          <div class="mr-5">123 New Orders!</div>
+          <div class="mr-5">{{ count_win }} Windows Reports!</div>
         </div>
-        <a class="card-footer text-white clearfix small z-1" href="#">
-          <span class="float-left">View Details</span>
-          <span class="float-right">
-            <i class="fa fa-angle-right"></i>
-          </span>
-        </a>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-3">
@@ -107,66 +90,14 @@ document.addEventListener('DOMContentLoaded', function main(e) {
           <div class="card-body-icon">
             <i class="fa fa-fw fa-support"></i>
           </div>
-          <div class="mr-5">13 New Tickets!</div>
+          <div class="mr-5">{{ count_lin }} Linux Reports!</div>
         </div>
-        <a class="card-footer text-white clearfix small z-1" href="#">
-          <span class="float-left">View Details</span>
-          <span class="float-right">
-            <i class="fa fa-angle-right"></i>
-          </span>
-        </a>
       </div>
     </div>
   </div>
-    <!-- Area Chart Example-->
-<div class="card mb-3">
-    <div class="card-header">
-      <i class="fa fa-area-chart"></i> Area Chart Example</div>
-    <div class="card-body">
-      <canvas id="myAreaChart" width="100%" height="30"></canvas>
-    </div>
-    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-  </div>
-  
-  <div class="row">
-    <div class="col-lg-8">
-      <!-- Example Bar Chart Card-->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fa fa-bar-chart"></i> Bar Chart Example</div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-sm-8 my-auto">
-              <canvas id="myBarChart" width="100" height="50"></canvas>
-            </div>
-            <div class="col-sm-4 text-center my-auto">
-              <div class="h4 mb-0 text-primary">$34,693</div>
-              <div class="small text-muted">YTD Revenue</div>
-              <hr>
-              <div class="h4 mb-0 text-warning">$18,474</div>
-              <div class="small text-muted">YTD Expenses</div>
-              <hr>
-              <div class="h4 mb-0 text-success">$16,219</div>
-              <div class="small text-muted">YTD Margin</div>
-            </div>
-          </div>
-        </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
-    </div>
-    <div class="col-lg-4">
-      <!-- Example Pie Chart Card-->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fa fa-pie-chart"></i> Pie Chart Example</div>
-        <div class="card-body">
-          <canvas id="myPieChart" width="100%" height="100"></canvas>
-        </div>
-        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-      </div>
-    </div>
-  </div>
-      
+
+
+
   <!-- Example DataTables Card-->
   <div class="card mb-3">
     <div class="card-header">
@@ -176,39 +107,67 @@ document.addEventListener('DOMContentLoaded', function main(e) {
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
-              <th>Age</th>
-              <th>Start date</th>
-              <th>Salary</th>
+              <th>System</th>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Machine</th>
+              <th>Processor</th>
+              <th>Machine ID</th>
             </tr>
           </thead>
-          
-          <tbody>
-            <tr>
-              <td>Tiger Nixon</td>
-              <td>System Architect</td>
-              <td>Edinburgh</td>
-              <td>61</td>
-              <td>2011/04/25</td>
-              <td>$320,800</td>
-            </tr>
-            <tr>
-              <td>Garrett Winters</td>
-              <td>Accountant</td>
-              <td>Tokyo</td>
-              <td>63</td>
-              <td>2011/07/25</td>
-              <td>$170,750</td>
-            </tr>
-          
+          {% for i in range(json_size) %}       
+            <tbody>
+              <tr>
+                <td>{{ APIcall[i]["system"] }}</td>
+                <td>{{ APIcall[i]["version"] }}</td>
+                <td>{{ APIcall[i]["release"] }}</td>
+                <td>{{ APIcall[i]["machine"] }}</td>
+                <td>{{ APIcall[i]["processor"] }}</td>
+                <td>{{ APIcall[i]["machine_id"] }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
-    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+    <div class="card-footer small text-muted" id="demo"> </div>
   </div>
+
+  <form method="POST" action="/machines_del" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <!-- <strong>Title</strong> --> {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+        {% endwith %}
+  
+        <div class="form-group">
+            {{ form.machine_id.label(class="form-control-label") }}
+            {% if form.machine_id.errors %}
+                {{ form.machine_id(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.machine_id.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.machine_id(class="form-control form-control-lg") }}
+            {% endif %}
+        </div>
+          <div class="form-group">
+            {{ form.submit(class="btn btn-danger btn-block") }}
+          </div>
+    </fieldset>
+  
+  </form>
+
 </ul>
 </div>
 </div>
