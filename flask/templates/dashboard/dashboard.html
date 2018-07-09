@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded', function main(e) {
     <!-- Icon Cards-->
 <div class="row">
     <div class="col-xl-3 col-sm-6 mb-3">
-      <div class="card text-white bg-primary o-hidden h-100">
+      <div class="card text-white bg-success o-hidden h-100">
         <div class="card-body">
           <div class="card-body-icon">
-            <i class="fa fa-fw fa-comments"></i>
+            <i class="fa fa-laptop"></i>
           </div>
           <div class="mr-5">{{ json_size }} Machines!</div>
         </div>
@@ -75,22 +75,22 @@ document.addEventListener('DOMContentLoaded', function main(e) {
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-3">
-      <div class="card text-white bg-success o-hidden h-100">
+      <div class="card text-white bg-primary o-hidden h-100">
         <div class="card-body">
           <div class="card-body-icon">
-            <i class="fa fa-fw fa-shopping-cart"></i>
+            <i class="fa fab fa-linux"></i>
           </div>
-          <div class="mr-5">{{ count_win }} Windows Reports!</div>
+          <div class="mr-5">{{ count_lin }} Linux Reports!</div>
         </div>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-3">
-      <div class="card text-white bg-danger o-hidden h-100">
+      <div class="card text-white bg-primary o-hidden h-100">
         <div class="card-body">
           <div class="card-body-icon">
-            <i class="fa fa-fw fa-support"></i>
+            <i class="fa fab fa-windows"></i>
           </div>
-          <div class="mr-5">{{ count_lin }} Linux Reports!</div>
+          <div class="mr-5">{{ count_win }} Windows Reports!</div>
         </div>
       </div>
     </div>
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function main(e) {
   <!-- Example DataTables Card-->
   <div class="card mb-3">
     <div class="card-header">
-      <i class="fa fa-table"></i> Data Table Example</div>
+      <i class="fa fa-table"></i> Data Table </div>
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">

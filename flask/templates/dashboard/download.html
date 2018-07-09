@@ -1,0 +1,47 @@
+{% extends "layouts/layout2.html" %}
+
+{% block title %}
+Download page
+{% endblock %}
+
+{% block breadcrumb %} 
+Quick Start
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card mb-3">
+    <div class="card-header">
+      <div class="row"> 
+        <div class="col-10">
+          <h2> 
+            <i class="fa fa-download"></i> Download agent
+          </h2>
+        </div>
+      </div>
+    </div> 
+  
+    <a  href="/return-file/" class="btn btn-primary"> Download</a>
+    
+    <div class="card-body">
+    <h3>Some extra informations if you need:</h3>
+    <p> Once downloaded the agent extract the folder where you want.</p>
+    <p> To unzip the file you just need to:</p>
+    
+    <ul><li> <b>On Linux:</b></li></ul>
+    <p> Install unzip if you haven't installed:</p>
+    <div class="alert alert-dark" role="alert">sudo apt-get install unzip </div> 
+    <p> Unzip the file to where you want to save it:</p>
+    <div class="alert alert-dark" role="alert"> unzip Zeus-Agent.zip -d destination_folder </div> 
+    
+    <ul><li> <b>On Windows, via powershell: </b></li></ul>
+    <div class="alert alert-dark" role="alert">Expand-Archive 'C:\downloadfolder\Zeus-Agent.zip' -Destinati
+        onPath C:\destination_folder </div>  
+
+    <p> We need to install some packages, and it's here that we give you a little present!</p>
+    <p> The next script will install for you the package manager(pip) and packages needed to run the agent:</p>
+    <div class="alert alert-dark" role="alert"> python install.py </div> 
+  </div>
+</div>
+{% endblock %}

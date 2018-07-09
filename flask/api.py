@@ -85,7 +85,6 @@ def get_scans():
     return payload, count#jsonify({'DetectOS': [hist for scan in hist.dataos]})
 
 def get_scans_table():
-
     payload = []
     count_all = 0
     count_win = 0
@@ -106,6 +105,7 @@ def get_scans_table():
                 payload.append(hist.dataos)
                 count=count+1
     return payload, count, count_all, count_win, count_lin
+    
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
 def get_scanid(scan_id):
     result = Historic.query.filter_by(id=scan_id).first()

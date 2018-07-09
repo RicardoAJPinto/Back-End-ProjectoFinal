@@ -30,6 +30,14 @@ def perfil():
         form.api_key.data = current_user.api_key
 
     return render_template('profile.html', form=form)
+    
+@app.route('/download')
+def download():
+    return render_template('dashboard/download.html')
+
+@app.route('/testset')
+def definetestset():
+    return render_template('dashboard/ChangeTestSet.html')
 
 @app.route('/login')
 def change():

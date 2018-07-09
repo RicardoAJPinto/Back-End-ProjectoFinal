@@ -35,20 +35,7 @@ db.init_app(app)
 
 # login = LoginManager(app)
 login_manager = LoginManager()
-login_manager.login_view = 'github.login'
 login_manager.init_app(app)
-
-# class MyAdminIndexView(AdminIndexView):    
-#     @expose('/')
-#     def index(self):
-#         if not current_user.is_authenticated:
-#             return redirect(url_for('.login_view'))
-#         return super( (MyAdminIndexView, self).index(),  index_view = MyAdminIndexView() )
-
-
-# @login.user_loader
-# def load_user(user_id):
-#     return User.query.get(user_id)
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -60,7 +47,6 @@ mail = Mail(app)
 
 # Admin page
 from AdminPage import *
-
 from views import *
 from api import * 
 from pdf import *

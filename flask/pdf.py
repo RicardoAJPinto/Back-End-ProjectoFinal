@@ -6,7 +6,6 @@ import requests
 from mailmerge import MailMerge
 from datetime import date
 
-
 @app.route('/generate_pdf/<historic>', methods=['GET','POST'])
 def generate_pdf(historic):
     # historic = Historic.query.filter_by(id=hist_id).first()

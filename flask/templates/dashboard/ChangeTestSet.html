@@ -1,0 +1,165 @@
+{% extends "layouts/layout2.html" %}
+
+{% block title %}
+Quick-start page
+{% endblock %}
+
+{% block breadcrumb %} 
+Change Test set
+{% endblock %}
+
+{% block script %} 
+<script> 
+document.addEventListener('DOMContentLoaded', function main(e) {  
+
+  $('#get-checked-data').on('click', function(event) {
+      event.preventDefault(); 
+      
+      var checkedItems = [], counter=0;
+      
+      //alert(document.querySelectorAll('input[type="checkbox"]:checked').length);
+      checks = document.querySelectorAll('input[type="checkbox"]:checked').length
+      if(checks == 0) alert("You haven't select any configuration... Maybe, just maybe you wanna do it!");
+      $(document.getElementById("Checkbox").checked == true).each(function() {
+        for (var i=0; i<checks; i++){
+          checkedItems.push(document.getElementById("TypeOfTest"+i).value);
+          //console.log(checkedItems)
+       }
+      });
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "create1" , true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        checkedItems
+      }));
+  });
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+<style>
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 26px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(15px);
+    -ms-transform: translateX(15px);
+    transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+</style>
+    
+<div class="card mb-3">
+    <div class="card-header">
+      <div class="row"> 
+        <div class="col-10">
+          <h2> 
+            <i class="fa fas fa-bolt"></i> Download agent
+          </h2>
+        </div>
+      </div>
+    </div> 
+    <div class="card-body">
+    <p>In this step, you will prepare a simple configuration for the agent to be deployed.</p>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <label class="switch">
+                <input type="checkbox" id="Checkbox">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <input type="text" class="form-control" id="TypeOfTest0" value="DetectOS" readonly> 
+        </div>
+        <p>Gets information about the current machine(Name, version, operating system, and other details.) </p>
+        
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <label class="switch">
+                <input type="checkbox" id="Checkbox">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
+        </div>
+        <p>Here you can activate your added scan </p>
+        <p>But first, check if your scan have this "rules":</p>
+        <ul>
+          <li>Python file </li>
+          <li>The scan must be runned with a function called runscan() </li>
+            <ul type="circle"> Example:
+              <li>def runscan(): </li> 
+            </ul>
+          <li>Return JSON, 
+              <a href="https://jsonlint.com/" target="_blank"> check here if you have been formated well your JSON</a>
+           </li>
+        </ul>
+        
+        <form method="post" action="/upload" enctype=multipart/form-data>
+          <input type="file" name="file" value="Choose script" >
+          <input type="submit" value="Upload" id="Upload">
+        </form>
+
+        <hr>
+        
+        <button class="btn btn-primary col-xs-12" id="get-checked-data">
+          Activate the agent configuration
+        </button>
+        <hr>
+      </div>
+</div>
+{% endblock %}

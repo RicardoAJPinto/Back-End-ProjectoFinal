@@ -45,7 +45,7 @@ db/create/admin:
 
 db/create/test:
 	@echo "--> Create test sample"
-	$(PSQL) -d $(DBNAME) -c "INSERT INTO test VALUES (1, True, True);"
+	$(PSQL) -d $(DBNAME) -c "INSERT INTO test VALUES (1, True, False);"
 
 db/create/tables:
 	@echo "--> create DB tables using SQAlchemy"

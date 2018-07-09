@@ -18,10 +18,11 @@ def quickstart():
 @login_required
 def dashboard():
     form = DeleteMachineForm()
-    requestpost, json_size, count, count_win, count_lin = get_scans_table()
+    
+    requestpost, count_all, count, count_win, count_lin = get_scans_table()
     mach = Machine.query.filter_by(owner_id=current_user.id).distinct()
+    requestpost, json_size = get_scans()
     return render_template('dashboard/dashboard.html', form=form, APIcall=requestpost, json_size=json_size, count=count, count_win=count_win, count_lin=count_lin)
-
 
 # ################################# File upload Section #################################
 #File upload
@@ -44,7 +45,6 @@ def upload_file():
     # CHANGE THIS! NO HARDCODE MODE XD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     return render_template("dashboard/quickstart.html")
     # return jsonify({'message' : 'File uploaded!'}), 201
-
 
 # Download file
 @app.route('/return-file/')
@@ -114,8 +114,6 @@ def return_file():
     # Feature to add: Download zip/folder file 
     return send_from_directory('../agent', 'Zeus-Agent.zip', as_attachment=True)
 
-
-
 @app.route('/machines_del', methods=['POST'])
 def machines_del():
     mach = request.form.get('machine_id')
@@ -148,16 +146,21 @@ def create1():
     jsonObjectInfo = request.json
     print(type(jsonObjectInfo))
     print(jsonObjectInfo)
- 
+
     print("Array is {0}".format(jsonObjectInfo['checkedItems']))
     #If more scans or more buttons are added, add this:
     # size = len(jsonObjectInfo['checkedItems'])
     # print(size)
- 
+
+    testset = Test.query.filter_by(id=current_user.test_id).first() 
+
     if len(jsonObjectInfo['checkedItems']) == 1:
-        test = Test(DetectOS=True, NewScan=False )
-        db.session.add(test) 
+        #test = Test(DetectOS=True, NewScan=False )
+        testset.DetectOS = True
+        testset.NewScan = False
+        #db.session.add(test) 
         db.session.commit()
+        return jsonify({'Scan_added':True}), 201
     else:
         size = 1
         for i in range(size):
@@ -167,8 +170,10 @@ def create1():
             print(ActivatedNew)
             #Gets the activated test and put it on DB
             # Same as (**{DetectOS:True}, **{NewScan:True} )
-            test = Test(**{ActivatedDet:True}, **{ActivatedNew:True} )
-            db.session.add(test) 
+            #test = Test(**{ActivatedDet:True}, **{ActivatedNew:True} )
+            #db.session.add(test) 
+            testset.DetectOS = True 
+            testset.NewScan = True
             db.session.commit()
             return jsonify({'Scan_added':True}), 201
 

@@ -12,27 +12,6 @@ Quick Start
 <script> 
 document.addEventListener('DOMContentLoaded', function main(e) {  
 
-
-  // <form method="post" action="/upload" enctype=multipart/form-data>
-  //         <input type="file" name="file">
-  //         <input type="submit" value="Upload">
-  //       </form>
-
-
-  // $('#Upload').on('click', function(event) {
-  //   var form = document.getElementById('upload')
-
-
-  //   var formData = new FormData(form);
-  //   formData.append('file', file);
-    
-  //   // var formData = new FormData(form);
-  //   // formData.append("thefile", file);
-  //   var xhr = new XMLHttpRequest();
-  //     xhr.open("POST", "upload" , true);
-  //     xhr.send(formData);
-  // });
-
   $('#get-checked-data').on('click', function(event) {
       event.preventDefault(); 
       
@@ -141,7 +120,7 @@ input:checked + .slider:before {
       role="tab" aria-controls="nav-config" aria-selected="false">Prepare the agent configuration</a>
 
       <a class="nav-item nav-link" id="nav-download-tab" data-toggle="tab" href="#nav-download"
-      role="tab" aria-controls="nav-download" aria-selected="false">Download time!</a>
+      role="tab" aria-controls="nav-download" aria-selected="false">Set up</a>
 
       <a class="nav-item nav-link" id="nav-run-tab" data-toggle="tab" href="#nav-run"
       role="tab" aria-controls="nav-run" aria-selected="false">Run the agent!</a>
@@ -165,12 +144,12 @@ input:checked + .slider:before {
           <p>Hang on for a few more minutes to learn how to configure the agent, so you can make the most out of Zeus.</p>
           <p>The tutorial assumes that you have:</p>
           <ul>
-            <li> Python version 3.6 installed on the machine - see the installation guides for 
+            <li> <b>Python</b> version 3.6 installed on the machine - see the installation guides for 
                 <a href="http://docs.python-guide.org/en/latest/starting/install3/osx/" target="_blank">OS X</a>,
                 <a href="http://docs.python-guide.org/en/latest/starting/install3/win/" target="_blank">Windows</a>,
                 <a href="http://docs.python-guide.org/en/latest/starting/install3/linux/" target="_blank">Linux</a>.
             </li>
-            <li> mais++</li>
+            <li> <b>Pip</b> installed, if not we have prepared you a gift! So don't worry about this, we will explain you this on the "Set up" section</li>
           </ul>
           <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-config-tab').click();" >
             Next
@@ -216,16 +195,30 @@ input:checked + .slider:before {
           <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
         </div>
         <p>Here you can activate your added scan </p>
-        <p>First, add your scan with this rules: função com run() sadasd Meter aqui um scan exemplo</p>
-        
+        <p>But first, check if your scan have this "rules":</p>
+        <ul>
+          <li>Python file </li>
+          <li>The scan must be runned with a function called runscan() </li>
+            <ul type="circle"> Example:
+              <li>def runscan(): </li> 
+            </ul>
+          <li>Return JSON, 
+              <a href="https://jsonlint.com/" target="_blank"> check here if you have been formated well your JSON</a>
+           </li>
+        </ul>
         
         <form method="post" action="/upload" enctype=multipart/form-data>
-          <input type="file" name="file">
+          <input type="file" name="file" value="Choose script" >
           <input type="submit" value="Upload" id="Upload">
         </form>
 
+        <hr>
         
-        <button class="btn btn-primary col-xs-12" id="get-checked-data">Activate the agent configuration</button>
+        <button class="btn btn-primary col-xs-12" id="get-checked-data">
+          Activate the agent configuration
+        </button>
+        <hr>
+
         <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-download-tab').click();" >
             Next
         </button>
@@ -239,14 +232,37 @@ input:checked + .slider:before {
         <h5>
         <span class="fa-stack fa-lg">
           <i class="fa fa-square fa-stack-2x"></i>
-          <i class="fa fa-download fa-stack-1x fa-inverse"></i> 
+          <i class="fa fa-wrench fa-stack-1x fa-inverse"></i> 
         </span>
-        Download
+        Set up
         </h5>
-        <p>You're ready to go, download the agent and use it on your machines!</p>
+        <p> In this step you will download the Zeus agent, learn how to setup the agent in better aways and install some dependencies 
+          needed to run the agent and provide communication between agent and server API.</p>
+        <p> So, first download the agent:</p>
         <div class="col-xl-3 col-sm-10 mb-3">
-            <a href="/return-file/" class="btn btn-primary "> Download </a>
+          <a 
+            href="/return-file/" class="btn btn-primary"> 
+            <i class="fa fa-download">  Download</i>
+          </a>
         </div>
+        <p> Once downloaded the agent extract the folder where you want.</p>
+        <p> To unzip the file you just need to:</p>
+        
+        <ul><li> <b>On Linux:</b></li></ul>
+        <p> Install unzip if you haven't installed:</p>
+        <div class="alert alert-dark" role="alert">sudo apt-get install unzip </div> 
+        <p> Unzip the file to where you want to save it:</p>
+        <div class="alert alert-dark" role="alert"> unzip Zeus-Agent.zip -d destination_folder </div> 
+        
+        <ul><li> <b>On Windows, via powershell: </b></li></ul>
+        <div class="alert alert-dark" role="alert">Expand-Archive 'C:\downloadfolder\Zeus-Agent.zip' -Destinati
+            onPath C:\destination_folder </div>  
+
+        <p> We need to install some packages, and it's here that we give you a little present!</p>
+        <p> The next script will install for you the package manager(pip) and packages needed to run the agent:</p>
+        <div class="alert alert-dark" role="alert"> python install.py </div> 
+        
+        <p> Check next step, we gonna learn how to deploy the agent on the machines</p>
         <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-run-tab').click();" >
             Next
         </button>
@@ -264,7 +280,19 @@ input:checked + .slider:before {
             </span>
             Lets run the configured agent!
             </h5>
-            <div class="alert alert-dark" role="alert">python zeus.py </div>  
+            <p> In this step you will deploy the agent making it sending data to the server. You will receive on your email a report from the scanned machine. </p>
+            <p> Run the script: </p>
+            <div class="alert alert-dark" role="alert">python zeus.py </div>
+            <p> If you're on Linux, we can some improvementes like:</p>
+            <ul><li> <b>Start the agent and restart it if it crashes</b></li></ul>  
+            <ul><li> <b>Start the agent in background:</b></li></ul>  
+            <div class="alert alert-dark" role="alert"> nohup monitor.sh & </div> 
+            <ul><li> <b>Continue running the agent after reboot:</b></li></ul>  
+            <p> Open crontab configuration with: </p>
+            <div class="alert alert-dark" role="alert"> crontab -e </div>
+            <p> Insert this rule associated with the path where the agent is located: </p>
+            <div class="alert alert-dark" role="alert"> @reboot  /path/to/script </div>  
+            <p> You have done the job! </p>
             <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-next-tab').click();" >
                 Next
             </button>
@@ -282,10 +310,13 @@ input:checked + .slider:before {
           </span>
           You reach to the final, it's easy isn't it?
           </h5>
-          <p>In this step, you will prepare a simple configuration for the agent to be deployed.</p>
-          <button type="button" class="btn btn-outline-success btn-lg btn-block" >
+          <p>You've reached the final of the this tutorial, has you can see it's pretty easy!</p>
+          <p>You know how configurate the test set, run the agent and improve the perfomance of the agent!</p>
+          <a href="/dashboard" style="text-decoration:none">
+            <button type="button" class="btn btn-outline-success btn-lg btn-block" >
               Deep into dashboard and enjoy!
-          </button>
+            </button>
+          </a>
         </li>
       </div>
       <!-- End next -->

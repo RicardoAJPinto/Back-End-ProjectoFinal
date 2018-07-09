@@ -85,62 +85,164 @@
     opacity: 1;
   }
 }
-
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+section{
+	padding: 60px 0;
+}
+section .section-title{
+	text-align:center;
+	color:#007b5e;
+	margin-bottom:50px;
+	text-transform:uppercase;
+}
+#what-we-do{
+	background:#ffffff;
+}
+#what-we-do .card{
+	padding: 1rem!important;
+	border: none;
+	margin-bottom:1rem;
+	-webkit-transition: .5s all ease;
+	-moz-transition: .5s all ease;
+	transition: .5s all ease;
+}
+#what-we-do .card:hover{
+	-webkit-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+	-moz-box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+	box-shadow: 5px 7px 9px -4px rgb(158, 158, 158);
+}
+#what-we-do .card .card-block{
+	padding-left: 50px;
+    position: relative;
+}
+#what-we-do .card .card-block a{
+	color: #007b5e !important;
+	font-weight:700;
+	text-decoration:none;
+}
+#what-we-do .card .card-block a i{
+	display:none;
+	
+}
+#what-we-do .card:hover .card-block a i{
+	display:inline-block;
+	font-weight:700;
+	
+}
+#what-we-do .card .card-block:before{
+	font-family: FontAwesome;
+    position: absolute;
+    font-size: 39px;
+    color: #007b5e;
+    left: 0;
+	-webkit-transition: -webkit-transform .2s ease-in-out;
+    transition:transform .2s ease-in-out;
+}
+#what-we-do .card .block-1:before{
+    content: "\f0e7";
+}
+#what-we-do .card .block-2:before{
+    content: "\f0eb";
+}
+#what-we-do .card .block-3:before{
+    content: "\f00c";
+}
+#what-we-do .card .block-4:before{
+    content: "\f06e";
+}
+#what-we-do .card .block-5:before{
+    content: "\f0c2";
+}
+#what-we-do .card .block-6:before{
+    content: "\f15c";
+}
+#what-we-do .card:hover .card-block:before{
+	-webkit-transform: rotate(360deg);
+	transform: rotate(360deg);	
+	-webkit-transition: .5s all ease;
+	-moz-transition: .5s all ease;
+	transition: .5s all ease;
+}
 </style>
+<div class="container"> 
+<!-- Services section -->
+<section id="what-we-do">
+		<div class="container-fluid">
+			<h2 class="section-title mb-2 h1">What we do</h2>
+			<p class="text-center text-muted h5">Having and managing a correct strategy is crucial in a fast moving market.</p>
+			<div class="row mt-5">
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-1">
+							<h3 class="card-title">Web app</h3>
+							<p class="card-text">Obtain information from all your machines via dashboard!</p>
+              
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-2">
+							<h3 class="card-title">Easy setup</h3>
+							<p class="card-text">No complexity. No overthinking. Configure everything via web. Simple and powerfull!</p>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-3">
+							<h3 class="card-title">Quick start</h3>
+							<p class="card-text">A detailed quick start for users to understand better the platform and to scale it if they want.</p>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-4">
+							<h3 class="card-title">Monitoring</h3>
+							<p class="card-text">Improve your security by deploying monitoring services.</p>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-5">
+							<h3 class="card-title">Cloud </h3>
+							<p class="card-text">Deploy with Heroku, a cloud platform more concretely a PaaS(Platform as a Service).</p>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+					<div class="card">
+						<div class="card-block block-6">
+							<h3 class="card-title">Reports</h3>
+							<p class="card-text">Automated generation of reports, sended via email.</p>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</section>
+	<!-- /Services section -->
 
-<header>
-  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators">
-      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-      <!-- Slide One - Set the background image for this slide in the line below -->
-      <div class="carousel-item active" style="background-image: url('http://placehold.it/1900x1080')">
-        <div class="carousel-caption d-none d-md-block">
-          <h3>Colocar print ou gifs no final</h3>
-          <p>This is a description for the first slide.</p>
-        </div>
-      </div>
-      <!-- Slide Two - Set the background image for this slide in the line below -->
-      <div class="carousel-item" style="background-image: url('http://placehold.it/1900x1080')">
-        <div class="carousel-caption d-none d-md-block">
-          <h3>Second Slide</h3>
-          <p>This is a description for the second slide.</p>
-        </div>
-      </div>
-      <!-- Slide Three - Set the background image for this slide in the line below -->
-      <div class="carousel-item" style="background-image: url('http://placehold.it/1900x1080')">
-        <div class="carousel-caption d-none d-md-block">
-          <h3>Third Slide</h3>
-          <p>This is a description for the third slide.</p>
-        </div>
-      </div>
-    </div>
-    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-  </div>
-</header>
-
-
-
+</div>
 <div class="container"> 
   <hr>
   <div class="row">
     <div class="col text-center">
-      <img src="https://www.qnap.com/solution/cross-platform-file-sharing/images/icon-02.png"> 
-      <h4>Cross platform</h4>
-    </div>
-    <div class="col text-center">
       <img src="http://www.adaptavist.com/assets/Blog-Images/Fast-easy-Confluence-forms-with-blueprints/Adaptavist-Forms-icon-orange-rev-300dpi-copy-200x200.png"  style="width:60%" > 
       <h4>Customization and Plan</h4>
+    </div>
+    <div class="col text-center">
+      <img src="https://www.qnap.com/solution/cross-platform-file-sharing/images/icon-02.png"> 
+      <h4>Cross platform</h4>
     </div>
     <div class="col text-center">
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Circle-icons-hourglass.svg/2000px-Circle-icons-hourglass.svg.png" style="width:60%"> 
@@ -202,6 +304,7 @@
                 <li> Use the test created by Zeus team</li>
                 <li> Use your own tests</li>
                 <li> Use tests made by the community</li>
+                <img src="/static/img/configuration1.png"  style="width:100% " >
               </div>
             </div>
 
@@ -212,21 +315,24 @@
                 <li> Go to your dashboard and select QuickStart</li>
                 <li> Select the test that you want to run on your PC</li>
                 <li> Download it</li>
+                <img src="/static/img/quickstart.png"  style="width:100% " >
               </div>
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
               <h2> Run ZEUS on your PC </h2>
               <div class="description">
-                <li> Afte download, install python if you do not have it yet</li>
-                <li> run the comment-> python install.py</li>
-                <li> Now that you have the requirements installed run -> python zeus.py</li>
+                <li> Quick deploy</li>
+                <li> No impact on your network infraestructure</li>
+                <li> Agent-based Assessment</li>
+                <img src="/static/img/history.png"  style="width:100% " >
               </div>
             </div>
             <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
               <h2> Whatch out for those reports </h2>
               <div class="description">
                 <li> Automated reports with the results sended to your email</li>
-                <li> See all your reports at our dashboard</li>
+                <li> See all your reports at dashboard</li>
+                <img src="/static/img/dashboard.png"  style="width:100% " >
               </div>
             </div>
           </div>
@@ -243,16 +349,15 @@
             <div class="card mb-5 mb-lg-0">
               <div class="card-body">
                 <h5 class="card-title text-muted text-uppercase text-center">Free</h5>
-                <h6 class="card-price text-center">$0<span class="period">/month</span></h6>
+                <h6 class="card-price text-center">0€<span class="period">/month</span></h6>
                 <hr>
                 <ul class="fa-ul">
                   <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Single User</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>5GB Storage</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited Public Projects</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Community Access</li>
-                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Unlimited Private Projects</li>
-                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Dedicated Phone Support</li>
-                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Free Subdomain</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited usage of the agent</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited scans per day</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Guide to the first steps</li>
+                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Customizable report</li>
+                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Filter reports do you wanna receive</li>
                   <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Monthly Status Reports</li>
                 </ul>
                 <a href="/register" class="btn btn-block btn-primary text-uppercase">Create free account </a>
@@ -264,19 +369,18 @@
             <div class="card mb-5 mb-lg-0">
               <div class="card-body">
                 <h5 class="card-title text-muted text-uppercase text-center">Plus</h5>
-                <h6 class="card-price text-center">$9<span class="period">/month</span></h6>
+                <h6 class="card-price text-center">9€<span class="period">/month</span></h6>
                 <hr>
                 <ul class="fa-ul">
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span><strong>5 Users</strong></li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>50GB Storage</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited Public Projects</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Community Access</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited Private Projects</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Dedicated Phone Support</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Free Subdomain</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Single User</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited usage of the agent</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited scans per day</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Guide to the first steps</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Customizable report</li>
+                  <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Filter reports do you wanna receive</li>
                   <li class="text-muted"><span class="fa fa-li"><i class="fas fa-times"></i></span>Monthly Status Reports</li>
                 </ul>
-                <a href="#" class="btn btn-block btn-primary text-uppercase">Button</a>
+                <a  class="btn btn-block btn-primary text-uppercase ">Not available</a>
               </div>
             </div>
           </div>
@@ -285,19 +389,18 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title text-muted text-uppercase text-center">Pro</h5>
-                <h6 class="card-price text-center">$49<span class="period">/month</span></h6>
+                <h6 class="card-price text-center">21€<span class="period">/month</span></h6>
                 <hr>
                 <ul class="fa-ul">
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span><strong>Unlimited Users</strong></li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>150GB Storage</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited Public Projects</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Community Access</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited Private Projects</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Dedicated Phone Support</li>
-                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span><strong>Unlimited</strong> Free Subdomains</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Single User</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited usage of the agent</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Unlimited scans per day</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Guide to the first steps</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Customizable report</li>
+                  <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Filter reports do you wanna receive</li>
                   <li><span class="fa fa-li"><i class="fas fa-check"></i></span>Monthly Status Reports</li>
                 </ul>
-                <a href="#" class="btn btn-block btn-primary text-uppercase">Button</a>
+                <a class="btn btn-block btn-primary text-uppercase">Not available</a>
               </div>
             </div>
           </div>
@@ -322,7 +425,7 @@
         <p>Everytime that you run Zeus a report will be made with the results of the scan, you can see the reports on your dashboard. Also will be create a Pdf and we will send it to your email account.</p>
       </div>
       <div class="col-lg-6">
-        <img class="img-fluid rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Circle-icons-download.svg/2000px-Circle-icons-download.svg.png" style="width:50%" alt="">
+        <img class="img-fluid rounded" src="http://www.icons101.com/icon_png/size_256/id_81395/DriverEasy.png" >
       </div>
     </div>
 
@@ -331,7 +434,7 @@
     <!-- Features Section -->
     <div class="row">
         <div class="col-lg-6">
-          <img class="img-fluid rounded" src="http://www.icons101.com/icon_png/size_256/id_81395/DriverEasy.png" alt="">
+          <img class="img-fluid rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Circle-icons-download.svg/2000px-Circle-icons-download.svg.png" style="width:50%" alt=""> 
         </div>
         <div class="col-lg-6">
           <h2>Back-end</h2>
@@ -507,7 +610,7 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
   <div class="container">
-    <p class="m-0 text-center text-white">Copyright &copy; Your Website 2018</p>
+    <p class="m-0 text-center text-white">Copyright &copy; Zeus 2018</p>
   </div>
   <!-- /.container -->
 </footer>
