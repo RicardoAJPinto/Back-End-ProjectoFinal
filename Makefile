@@ -1,8 +1,7 @@
 SHELL = /bin/bash
 WORKDIR = /vagrant/flask
 
-#PSQL = sudo -u postgres psql
-PSQL = heroku pg:psql
+PSQL = sudo -u postgres psql
 DBNAME = projetofinal_dev
 DBUSER = dev_user
 DBPASS = dev_pass
