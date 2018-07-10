@@ -35,14 +35,6 @@ db/destroy/user:
 	@echo "--> delete DB user"
 	$(PSQL) -c "DROP USER IF EXISTS $(DBUSER);"
 
-db/create/admin: 
-	@echo "--> Create admin user"
-	$(PSQL) -d $(DBNAME) -c "INSERT INTO "user" (id, email, password, active) VALUES (99, 'admin@zeus.pt', 'zeuspowerADMIN', True);"
-	@echo "--> create role for admin"
-	$(PSQL) -d $(DBNAME) -c "INSERT INTO role (id, name) VALUES (99, 'admin');"
-	@echo "--> create relationship role for admin"
-	$(PSQL) -d $(DBNAME) -c "INSERT INTO roles_users (user_id, role_id) VALUES (99, 99);"
-
 db/create/test:
 	@echo "--> Create test sample"
 	$(PSQL) -d $(DBNAME) -c "INSERT INTO test VALUES (1, True, False);"

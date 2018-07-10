@@ -16,8 +16,8 @@ with open('api.pem', mode='rb') as idfile:
   api_file = idfile.read()
 
 # Url of the endpoint to post the scans
-url = 'http://127.0.0.1:5000/api/scans'
-url_reload = 'http://127.0.0.1:5000/reload'
+url = 'https://zeus-sec.herokuapp.com/api/scans'
+url_reload = 'https://zeus-sec.herokuapp.com/reload'
   
 machine_id=hex(uuid.getnode()).encode('utf8')
 encrypted = rsa.encrypt(machine_id, pub_key)

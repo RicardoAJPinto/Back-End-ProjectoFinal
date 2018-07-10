@@ -1,1 +1,1 @@
-web: make flask/dev
+web: make flask/prod
