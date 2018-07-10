@@ -18,7 +18,7 @@ def reseted():
     if user:
         s = URLSafeTimedSerializer('Thisisasecret!')
         token = s.dumps(user.email, salt='email-confirm')
-        msg = Message('Confirm Email', sender='ZeusNoReply@gmail.com', recipients=[user.email])
+        msg = Message('Forgot password', sender='ZeusNoReply@gmail.com', recipients=[user.email])
         link = url_for('reset_with_token', token=token, _external=True)
         msg.body = 'Your link to new password is {}'.format(link)
         mail.send(msg)

@@ -86,13 +86,7 @@ def return_file():
             # writing each file one by one
             for file in file_paths:
                 zip.write(file)
-
-        ## Delete existing files ##
-        try:
-            os.remove("./agent/NewScan.py")
-        except OSError as e:  ## if failed, report it back to the user ##
-            print ("Error: %s - %s." % (e.filename, e.strerror))
-
+                
         print('All files zipped successfully!')    
     
     # Insert API key from the authenticated user

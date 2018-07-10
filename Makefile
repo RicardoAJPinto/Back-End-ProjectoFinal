@@ -9,7 +9,7 @@ DBPASS = dev_pass
 db/console:
 	$(PSQL) $(DBNAME)
 
-db/create: db/create/user db/create/database db/install/uuid db/create/tables db/create/test
+db/create: /db/create/tables db/create/user db/create/database db/install/uuid db/create/test
 
 db/destroy: db/destroy/database db/destroy/user
 
