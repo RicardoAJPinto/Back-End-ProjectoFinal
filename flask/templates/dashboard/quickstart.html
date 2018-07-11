@@ -183,18 +183,7 @@ input:checked + .slider:before {
         </div>
         <p>Gets information about the current machine(Name, version, operating system, and other details.) </p>
         
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <label class="switch">
-                <input type="checkbox" id="Checkbox">
-                <span class="slider round"></span>
-              </label>
-            </div>
-          </div>
-          <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
-        </div>
-        <p>Here you can activate your added scan </p>
+        <p>Here you can activate a new scan added by you! </p>
         <p>But first, check if your scan have this "rules":</p>
         <ul>
           <li>Python file </li>
@@ -206,12 +195,29 @@ input:checked + .slider:before {
               <a href="https://jsonlint.com/" target="_blank"> check here if you have been formated well your JSON</a>
            </li>
         </ul>
-        
+        <p>Here you can upload your script to be runned on your machine</p>
+
         <form method="post" action="/upload" enctype=multipart/form-data>
           <input type="file" name="file" value="Choose script" >
           <input type="submit" value="Upload" id="Upload">
         </form>
 
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <label class="switch">
+                <input type="checkbox" id="Checkbox">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
+        </div>
+        
+        
+        
+   
         <hr>
         
         <button class="btn btn-primary col-xs-12" id="get-checked-data">
@@ -262,7 +268,7 @@ input:checked + .slider:before {
         <p> The next script will install for you the package manager(pip) and packages needed to run the agent:</p>
         <div class="alert alert-dark" role="alert"> python install.py </div> 
         
-        <p> Check next step, we gonna learn how to deploy the agent on the machines</p>
+        <p> Check next step, we gonna learn how to deploy the agent on the machines.</p>
         <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-run-tab').click();" >
             Next
         </button>
