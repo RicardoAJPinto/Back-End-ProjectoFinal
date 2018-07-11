@@ -1,7 +1,18 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/RicardoAJPinto/Back-End-ProjectoFinal/badge.svg)](https://snyk.io/test/github/RicardoAJPinto/Back-End-ProjectoFinal)
 
+![Imgur](https://i.imgur.com/4gRpnuO.png)
 Zeus - Agent Based Vulnerability Assessment
 ===========
+![logo do ipt](http://portal2.ipt.pt/img/logo.png "Instituto Politécnico de Tomar")
+
+The present project was elaborated within the scope of the final project discipline.
+
+The objective of this project is to develop and make available a system to monitor a set of machines and services, capable of summarizing information at a central point, available through the web interface. This should provide information about possible vulnerabilities, generate reports of the analyzes made and possibly possible solutions to the problems encountered.
+
+For this user will have available in the web application a cross-platform agent. This agent must be installed on the target machines, being responsible for running tests in the defined time intervals and communicating results to the server
+
+
+Website:  https://zeus-sec.herokuapp.com/ 
 
 Prerequisites
 ------------
@@ -82,7 +93,6 @@ Used technologies
 * Pip 
 * Flask
 * PostgreSQL + SQLAlchemy
-* (to be used: Vue.js)
 
 Project overview
 ------------
