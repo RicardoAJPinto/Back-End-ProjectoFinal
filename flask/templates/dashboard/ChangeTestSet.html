@@ -110,56 +110,64 @@ input:checked + .slider:before {
         </div>
       </div>
     </div> 
+
     <div class="card-body">
     <p>In this step, you will prepare a simple configuration for the agent to be deployed.</p>
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <label class="switch">
-                <input type="checkbox" id="Checkbox">
-                <span class="slider round"></span>
-              </label>
-            </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            <label class="switch">
+              <input type="checkbox" id="Checkbox">
+              <span class="slider round"></span>
+            </label>
           </div>
-          <input type="text" class="form-control" id="TypeOfTest0" value="DetectOS" readonly> 
         </div>
-        <p>Gets information about the current machine(Name, version, operating system, and other details.) </p>
-        
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <label class="switch">
-                <input type="checkbox" id="Checkbox">
-                <span class="slider round"></span>
-              </label>
-            </div>
-          </div>
-          <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
-        </div>
-        <p>Here you can activate your added scan </p>
-        <p>But first, check if your scan have this "rules":</p>
-        <ul>
-          <li>Python file </li>
-          <li>The scan must be runned with a function called runscan() </li>
-            <ul type="circle"> Example:
-              <li>def runscan(): </li> 
-            </ul>
-          <li>Return JSON, 
-              <a href="https://jsonlint.com/" target="_blank"> check here if you have been formated well your JSON</a>
-           </li>
-        </ul>
-        
-        <form method="post" action="/upload" enctype=multipart/form-data>
-          <input type="file" name="file" value="Choose script" >
-          <input type="submit" value="Upload" id="Upload">
-        </form>
-
-        <hr>
-        
-        <button class="btn btn-primary col-xs-12" id="get-checked-data">
-          Activate the agent configuration
-        </button>
-        <hr>
+        <input type="text" class="form-control" id="TypeOfTest0" value="DetectOS" readonly> 
       </div>
+      <hr>
+      <p>Gets information about the current machine(Name, version, operating system, and other details.) </p>
+      
+      <p>Here you can activate a new scan added by you! </p>
+      <p>But first, check if your scan have this "rules":</p>
+      <ul>
+        <li>Python file </li>
+        <li>The scan must be runned with a function called runscan() </li>
+          <ul type="circle"> Example:
+            <li>def runscan(): </li> 
+          </ul>
+        <li>Return JSON, 
+            <a href="https://jsonlint.com/" target="_blank"> validate your JSON here!</a>
+         </li>
+      </ul>
+      <p>Here you can upload your script to be runned on your machine</p>
+
+      <form method="post" action="/upload" enctype=multipart/form-data>
+        <input type="file" name="file" value="Choose script" >
+        <input type="submit" value="Upload" id="Upload">
+      </form>
+
+      <hr>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            <label class="switch">
+              <input type="checkbox" id="Checkbox">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        <input type="text" class="form-control" id="TypeOfTest1" value="NewScan" readonly> 
+      </div>
+      <hr>
+      
+      <button class="btn btn-primary col-xs-12" id="get-checked-data">
+        Activate the agent configuration
+      </button>
+      <hr>
+
+      <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-download-tab').click();" >
+          Next
+      </button>
+    </li>  
 </div>
 {% endblock %}
