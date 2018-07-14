@@ -25,7 +25,6 @@ Flask-JWT-Extended
 Flask-Login
 Flask-Mail
 Flask-Migrate
-Flask-OAuth
 Flask-Principal
 Flask-RESTful
 flask-restplus
@@ -54,8 +53,6 @@ Mako
 MarkupSafe
 mccabe
 msgpack-python
-oauth2
-oauthlib
 passlib
 pefile
 pipenv
@@ -78,7 +75,6 @@ pyzmq
 redis
 registry
 requests
-requests-oauthlib
 schedule
 singledispatch
 six
