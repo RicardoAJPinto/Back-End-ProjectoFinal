@@ -30,7 +30,6 @@ Flask-RESTful
 flask-restplus
 Flask-Script
 Flask-Security
-Flask-Social
 Flask-SQLAlchemy
 Flask-SSLify
 Flask-WTF
