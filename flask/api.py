@@ -26,63 +26,17 @@ DetectOS = [
         "processor": "Intel64 Family 6 Model 69 Stepping 1, GenuineIntel"
     },
 ]
-
-######################### Decorators #################################
-# API key validation
-def require_appkey(view_function):
-    @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
-    def decorated_function(*args, **kwargs):
-        APIkey = None
-        if 'x-api-key' in request.headers:
-            APIkey = request.headers.get('x-api-key')
-        if not APIkey:
-            return jsonify({'message' : 'APIKey is missing!'}), 401
-        print(APIkey)
-        try:
-            key = User.query.filter_by(api_key=APIkey).first()
-            print(key)
-        except:
-            return jsonify({'message' : 'APIKey is invalid!'}), 401
-        return view_function(key, *args, **kwargs)
-    return decorated_function
-
-
-########################## REAL GENERATE PRIVATE KEY   (on comand line)
-   # openssl genrsa -out key.pem
-   # openssl rsa -in key.pem -RSAPublicKey_out -out pubkey.pem
-@app.route('/generatetest', methods=['GET'])
-def generate_keytest():
-
-    with open('pubkey.pem', mode='rb') as pubfile:
-        keydata = pubfile.read()
-    pub = rsa.PublicKey.load_pkcs1(keydata)
-    user_id = current_user.user_id.encode('utf8')
-    encrypted = rsa.encrypt(user_id, pub)
-    return jsonify({'result': True })
-    
-######################### API views ###################################
-# encode - decode -
-# Get all the scans
-@app.route('/api/scans', methods=['GET'])
-@login_required
-def get_scans():
-    # mach = Machine.query.filter_by(owner_id=current_user.id).all()
-    
-    # if not mach:
-    #     abort(404)
+def get_scans():    
     payload = []
     count = 0
-    # for machine in mach:
     hist = Historic.query.filter_by(user_id=current_user.id).all()
-    
-
     if hist:
         for data in hist:
             count=count+1
             payload.append(data.dataos)
-    # requestpost = jsonify({[payload]})
-    return payload, count#jsonify({'DetectOS': [hist for scan in hist.dataos]})
+        print(payload)
+    return payload, count 
+
 
 def get_scans_table():
     payload = []
@@ -105,8 +59,61 @@ def get_scans_table():
                 payload.append(hist.dataos)
                 count=count+1
     return payload, count, count_all, count_win, count_lin
+######################### Decorators #################################
+# API key validation
+def require_appkey(view_function):
+    @wraps(view_function)
+    # the new, post-decoration function. Note *args and **kwargs here.
+    def decorated_function(*args, **kwargs):
+        APIkey = None
+        if 'x-api-key' in request.headers:
+            APIkey = request.headers.get('x-api-key')
+        if not APIkey:
+            return jsonify({'message' : 'APIKey is missing!'}), 401
+        print(APIkey)
+        try:
+            key = User.query.filter_by(api_key=APIkey).first()
+            print(key)
+        except:
+            return jsonify({'message' : 'APIKey is invalid!'}), 401
+        return view_function( *args, **kwargs)
+    return decorated_function
+
+
+########################## REAL GENERATE PRIVATE KEY   (on comand line)
+   # openssl genrsa -out key.pem
+   # openssl rsa -in key.pem -RSAPublicKey_out -out pubkey.pem
+@app.route('/generatetest', methods=['GET'])
+def generate_keytest():
+
+    with open('pubkey.pem', mode='rb') as pubfile:
+        keydata = pubfile.read()
+    pub = rsa.PublicKey.load_pkcs1(keydata)
+    user_id = current_user.user_id.encode('utf8')
+    encrypted = rsa.encrypt(user_id, pub)
+    return jsonify({'result': True })
+    
+######################### API views ###################################
+# Get all the scans
+@app.route('/api/scans', methods=['GET'])
+@require_appkey
+def getscans():
+    payload = []
+    count = 0
+    consumerKey = request.headers.get('x-api-key')
+    print(consumerKey)
+    user = User.query.filter_by(api_key=consumerKey).first()
+    print(user)
+    hist = Historic.query.filter_by(user_id=user.id).all()
+    print(hist)
+    for data in hist:
+        count=count+1
+        payload.append(data.dataos)
+    print(payload)
+    return jsonify({'History' : payload})
     
 @app.route('/api/scans/<int:scan_id>', methods=['GET'])
+@require_appkey
 def get_scanid(scan_id):
     result = Historic.query.filter_by(id=scan_id).first()
     if not result:
