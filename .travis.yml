@@ -1,5 +1,30 @@
 language: python
 
+branches:
+  only:
+  - master
+
 python:
   - "2.7"
   - "3.6"
+cache: pip
+
+services:
+  - postgresql
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install language-pack-es
+
+install:
+  - pip install -r requirements.txt
+
+before_script:
+  - psql -c 'create database projetofinal_dev;' -U postgres
+  
+test:
+  adapter: postgresql
+  database: projetofinal_dev
+  
+script: pytest
+
