@@ -25,6 +25,4 @@ before_script:
 test:
   adapter: postgresql
   database: projetofinal_dev
-  
-script: pytest
 
