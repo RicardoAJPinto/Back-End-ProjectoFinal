@@ -159,25 +159,20 @@ def post_scan():
     #     # url = 'http://127.0.0.1:5000/api/scans'
     #     # requestpost = requests.post(url , json=payload, headers=headers)
 
-    if not 'machine' or not 'version' in request.json:
-        print("Não tenho system e version")
-        new_scan = {
-            'id': DetectOS[-1]['id'] + 1,  
-            'system': request.json.get('system', ""),
-            'node': request.json.get('node', ""),
-        }
-    else:
-        new_scan = {
-            'id': DetectOS[-1]['id'] + 1,  
-            'machine': request.json.get('machine', ""),
-            'node': request.json.get('node', ""),
-            'processor': request.json.get('processor', "" ),
-            'release': request.json.get('release', ""),
-            'system': request.json['system'],
-            'version': request.json['version'],
-            'machine_id': message_machine
 
-        }
+    new_scan = {
+        'id': DetectOS[-1]['id'] + 1,  
+        'machine': request.json.get('machine', ""),
+        'node': request.json.get('node', ""),
+        'processor': request.json.get('processor', "" ),
+        'release': request.json.get('release', ""),
+        'system': request.json['system'],
+        'version': request.json['version'],
+        'machine_id': message_machine,
+        'lsass': request.json.get('lsass', ""),
+        'eset': request.json.get('eset', ""),
+        'points': request.json.get('points', ""),
+    }
 
     DetectOS.append(new_scan)
     # print(message_machine)
