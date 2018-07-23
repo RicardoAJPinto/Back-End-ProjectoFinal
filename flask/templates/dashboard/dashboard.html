@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function main(e) {
               <th>Machine</th>
               <th>Processor</th>
               <th>Machine ID</th>
+              <th>Test One</th>
+              <th>Test Two</th>
             </tr>
           </thead>
           {% for i in range(json_size) %}       
@@ -124,6 +126,8 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 <td>{{ APIcall[i]["machine"] }}</td>
                 <td>{{ APIcall[i]["processor"] }}</td>
                 <td>{{ APIcall[i]["machine_id"] }}</td>
+                <td>{{ APIcall[i]["testone"] }}</td>
+                <td>{{ APIcall[i]["testtwo"] }}</td>
               </tr>
             {% endfor %}
           </tbody>

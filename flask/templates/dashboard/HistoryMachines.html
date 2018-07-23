@@ -128,6 +128,22 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 </span>
                 {{ APIcall[i]["points"] }}
               </a>
+
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3><i class="fa fas fa-history"></i> </h3> 
+                </span>
+                Test Result One:
+                {{ APIcall[i]["testone"] }}
+              </a>
+  
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3> <i class="fa fab fa-connectdevelop"></i></h3> 
+                </span> 
+                Test Result two:
+                {{ APIcall[i]["testtwo"] }}
+              </a>
         </div>
       </div>
       {% endfor %}

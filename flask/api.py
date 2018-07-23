@@ -172,6 +172,8 @@ def post_scan():
         'lsass': request.json.get('lsass', ""),
         'eset': request.json.get('eset', ""),
         'points': request.json.get('points', ""),
+        'testone': request.json.get('TestResult', ""),
+        'testtwo': request.json.get('TestResult2', ""),
     }
 
     DetectOS.append(new_scan)

@@ -39,7 +39,7 @@ result_scans = request.json()
 if result_scans["DetectOS:"] == True:
   import DetectOS
   result = DetectOS.OperatingSystem(payload_zeus)
-  if result["system"] != '':
+  if result["lsass"] != 'Activated':
     points = points + 5
   if result_scans["NewScan:"] == False:
     result["points"] = points
@@ -49,11 +49,11 @@ if result_scans["DetectOS:"] == True:
 
 # Scann added
 if result_scans["NewScan:"] == True:
-  import Antivirus
-  if payload_zeus["system"] != '':
+  import userTest
+  result1 = userTest.runscan(result)
+  if result1["system"] != '':
     points = points + 10
-    result["points"] = points
-  result1 = Antivirus.runscan(result)
+    result1["points"] = points
   print(result1)
   requestpost = requests.post(url , json=result1, headers=headers)
   print("Done 2nd post")
