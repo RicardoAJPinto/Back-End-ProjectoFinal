@@ -48,6 +48,8 @@ def get_scans_table():
     hist_all = Historic.query.filter_by(user_id=current_user.id).all()
     for histo in hist_all:
         count_all=count_all+1
+        if not histo.dataos['system']:
+            return jsonify({'message' : 'No system found'}), 401
         if histo.dataos['system']=='Linux':
             count_lin = count_lin + 1
         if histo.dataos['system']=='Windows':
@@ -99,7 +101,6 @@ def generate_keytest():
 @require_appkey
 def getscans():
     payload = []
-    count = 0
     consumerKey = request.headers.get('x-api-key')
     print(consumerKey)
     user = User.query.filter_by(api_key=consumerKey).first()
@@ -107,7 +108,6 @@ def getscans():
     hist = Historic.query.filter_by(user_id=user.id).all()
     print(hist)
     for data in hist:
-        count=count+1
         payload.append(data.dataos)
     print(payload)
     return jsonify({'History' : payload})
@@ -152,31 +152,43 @@ def post_scan():
     message_machine = machineid.decode('utf8')
     #print(message_machine)
 
-    # If already exists the machine:
-    # exists = Machine.query.filter_by(machine_id=message_machine).first()
-    # if exists:    
-    #     abort(400, 'Already scanned this machine')
-    #     # url = 'http://127.0.0.1:5000/api/scans'
-    #     # requestpost = requests.post(url , json=payload, headers=headers)
+    #If already exists the machine:
+    exists = Machine.query.filter_by(machine_id=message_machine).first()
+    if exists: 
+        print("Updating your scan")   
+        user = User.query.filter_by(api_key=message_user).first()
+        print(user)
+        scanid= Historic.query.filter_by(test_id=user.test_id).first()
+        print(scanid)
+        test = update_scan(scanid)
+        return jsonify({'result': 'Update scan with sucess!'})
+        #abort(400, 'Already scanned this machine')
+        #url = 'http://127.0.0.1:5000/api/scans'
+    
+        # requestpost = requests.put(url, headers=request.json, params=)
+       # print(requestpost)
 
-
-    new_scan = {
-        'id': DetectOS[-1]['id'] + 1,  
-        'machine': request.json.get('machine', ""),
-        'node': request.json.get('node', ""),
-        'processor': request.json.get('processor', "" ),
-        'release': request.json.get('release', ""),
-        'system': request.json['system'],
-        'version': request.json['version'],
-        'machine_id': message_machine,
-        'lsass': request.json.get('lsass', ""),
-        'eset': request.json.get('eset', ""),
-        'points': request.json.get('points', ""),
-    }
+    print(request.json)
+    
+    if 'machine' or 'node' or 'system' in request.json:
+        new_scan = {
+            'id': DetectOS[-1]['id'] + 1,  
+            'machine': request.json.get('machine', ""),
+            'node': request.json.get('node', ""),
+            'processor': request.json.get('processor', "" ),
+            'release': request.json.get('release', ""),
+            'system': request.json.get('system', ""),
+            'version': request.json.get('version', ""),
+            'machine_id': message_machine,
+            'lsass': request.json.get('lsass', ""),
+            'antivirus': request.json.get('antivirus', ""),
+            'points': request.json.get('points', ""),
+        }
 
     DetectOS.append(new_scan)
     # print(message_machine)
     # print(message_user)
+    print(new_scan)
     mach = Machine.query.filter_by(machine_id=message_machine).first()
     user = User.query.filter_by(api_key=message_user).first()
     if not user:
@@ -197,15 +209,18 @@ def post_scan():
 
     print(result.id)
 
-    if not 'machine' or not 'version' in request.json:
+    if 'lsass' or not 'machine' or not 'version' in request.json:
         return jsonify({'result': True})
     return redirect(url_for('generate_pdf',historic=ide))
 
-# Update a parameter passing the  id on the route ################################## NOT GOOD
+# Update a parameter passing the  id on the route
 @app.route('/api/scans/<int:scan_id>', methods=['PUT'])
+@require_appkey
 def update_scan(scan_id):
+    print("scan_id")
     #scan = [scan for scan in DetectOS if scan['id'] == scan_id]
     scan = Historic.query.filter_by(id=scan_id).first()
+    print(scan)
     if not scan:
         abort(404)
     if not request.json:
@@ -229,9 +244,16 @@ def update_scan(scan_id):
     scan[0]['release'] = request.json.get('release', scan[0]['release'])
     scan[0]['system'] = request.json.get('system', scan[0]['system'])
     scan[0]['version'] = request.json.get('version', scan[0]['version'])
+    scan[0]['machine_id'] = request.json.get('machine_id', scan[0]['machine_id'])
+    scan[0]['lsass'] = request.json.get('lsass', scan[0]['lsass'])
+    scan[0]['antivirus'] = request.json.get('antivirus', scan[0]['antivirus'])
+    scan[0]['points'] = request.json.get('points', scan[0]['points'])
+
+    print(scan[0])
     return jsonify({'Updated_scan': scan[0]})
 
 @app.route('/api/scans/<int:scan_id>', methods=['DELETE'])
+@require_appkey
 def delete_scan(scan_id):
     scan = Historic.query.filter_by(id=scan_id).first()
     if not scan:

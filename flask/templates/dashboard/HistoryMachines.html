@@ -80,59 +80,88 @@ document.addEventListener('DOMContentLoaded', function main(e) {
               {{ APIcall[i]["release"] }}
             </a>
 
-            <a class="list-group-item list-group-item-action"> 
-              <span class="badge badge-pill badge-light">
-                <h3><i class="fa fas fa-history"></i> </h3> 
-              </span>
-              Version:
-              {{ APIcall[i]["version"] }}
-            </a>
+            {% if (APIcall[i]["version"] != null) %}
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3><i class="fa fas fa-history"></i> </h3> 
+                </span>
+                Version:
+                {{ APIcall[i]["version"] }}
+              </a>
+            {% endif %} 
 
-            <a class="list-group-item list-group-item-action"> 
-              <span class="badge badge-pill badge-light">
-                <h3> <i class="fa fab fa-connectdevelop"></i></h3> 
-              </span> 
-              Architecture:
-              {{ APIcall[i]["machine"] }}
-            </a>
+            {% if (APIcall[i]["machine"] != null) %}
+              <a class="list-group-item list-group-item-action"> 
+                <span class="badge badge-pill badge-light">
+                  <h3> <i class="fa fab fa-connectdevelop"></i></h3> 
+                </span> 
+                Architecture:
+                {{ APIcall[i]["machine"] }}
+              </a>
+            {% endif %} 
 
+            {% if (APIcall[i]["processor"] != null) %}
             <a class="list-group-item list-group-item-action"> 
               <span class="badge badge-pill badge-light">
                 <h3> <i class="fa fas fa-microchip"></i> </h3> 
               </span>
               {{ APIcall[i]["processor"] }}
             </a>
+            {% endif %} 
 
-            <a class="list-group-item list-group-item-action"> 
+            {% if (APIcall[i]["machine_id"] != null) %}
+              <a class="list-group-item list-group-item-action"> 
                 <span class="badge badge-pill badge-light">
-                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
+                  <h3> <i class="fa fa-info-circle"></i> </h3> 
                 </span>
+                Machine id:
                 {{ APIcall[i]["machine_id"] }}
               </a>
+            {% endif %} 
+
+            {% if (APIcall[i]["lsass"] != null) %}
               <a class="list-group-item list-group-item-action"> 
                 <span class="badge badge-pill badge-light">
                   <h3> <i class="fa fa-shield"></i> </h3> 
                 </span>
-                <b> <b1> {{ APIcall[i]["lsass"] }} </b1 > </b>
+                {% if (APIcall[i]["lsass"] != "Activated") %}
+                  <b style="color:red;"> <b1> {{ APIcall[i]["lsass"] }} </b1 > </b>
+                
+                {% elif (APIcall[i]["lsass"] == "Activated")  %} 
+                  <b style="color:green;"> <b1> {{ APIcall[i]["lsass"] }} </b1 > </b>
+                {% endif %}
               </a>
+            {% endif %} 
+
+            {% if (APIcall[i]["antivirus"] != null) %}
               <a class="list-group-item list-group-item-action"> 
                 <span class="badge badge-pill badge-light">
                   <h3> <i class="fa fa-life-ring"></i> </h3> 
                 </span>
                 Anti-virus:
-                {{ APIcall[i]["eset"] }}
+                {% if (APIcall[i]["antivirus"] == null) %}
+                  No anti-virus activated
+                {% endif %} 
+                {{ APIcall[i]["antivirus"] }}
               </a>
+            {% endif %} 
+
+            {% if (APIcall[i]["points"] != null) %}
               <a class="list-group-item list-group-item-action"> 
                 <span class="badge badge-pill badge-light">
-                  <h3> <i class="fa fas fa-microchip"></i> </h3> 
+                  <h3> <i class="fa fa-certificate  "></i> </h3> 
                 </span>
+                Points:
                 {{ APIcall[i]["points"] }}
               </a>
+            {% endif %} 
         </div>
       </div>
       {% endfor %}
     </div>
-    <div class="card-footer small text-muted" id="demo"> </div>
+    <div class="card-footer  text-muted" id="demo"> 
+      hi
+    </div>
   </div>
 </div>
 {% endblock %}

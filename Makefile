@@ -9,7 +9,7 @@ DBPASS = dev_pass
 db/console:
 	$(PSQL) $(DBNAME)
 
-db/create: /db/create/tables db/create/user db/create/database db/install/uuid db/create/test
+db/create: db/create/user db/create/database db/install/uuid db/create/tables db/create/test  
 
 db/destroy: db/destroy/database db/destroy/user
 
@@ -38,10 +38,15 @@ db/destroy/user:
 db/create/test:
 	@echo "--> Create test sample"
 	$(PSQL) -d $(DBNAME) -c "INSERT INTO test VALUES (1, True, False);"
+	@echo "--> testing test set basic creation"
+	$(PSQL) -d $(DBNAME) -c "SELECT * FROM test;"
+
 
 db/create/tables:
 	@echo "--> create DB tables using SQAlchemy"
-	$(shell cd $(WORKDIR); pipenv run python -c 'from app import db; db.create_all();'	) 
+	$(shell cd $(WORKDIR); pipenv run python -c 'from app import db; db.create_all();') 
+	@echo "--> testing db creation"
+	$(PSQL) -d $(DBNAME) -c "\dt"
 	
 
 db/create/er:

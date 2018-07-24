@@ -103,6 +103,7 @@ rsa = "*"
 bcrypt = "*"
 gunicorn = "*"
 docx-mailmerge = "*"
+psutil = "*"
 
 [dev-packages]
 eralchemy = "*"

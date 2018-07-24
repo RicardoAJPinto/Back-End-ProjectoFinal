@@ -10,6 +10,7 @@ def runscan(result):
             if "lsass" in str(pinfo):
                 result["lsass"] = "Activated"
             if "ekrn" in str(pinfo):
-                result["eset"] = "ESET"
+                result["antivirus"] = "ESET"
+
     return result
         

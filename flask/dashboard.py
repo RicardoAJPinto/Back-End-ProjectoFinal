@@ -42,7 +42,6 @@ def upload_file():
         #file.save(os.path.join('agent/', current_user.email + "NewScan.py"  ))
         file.save(os.path.join('agent/', "NewScan.py"))
 
-    # CHANGE THIS! NO HARDCODE MODE XD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     return render_template("dashboard/quickstart.html")
     # return jsonify({'message' : 'File uploaded!'}), 201
 
