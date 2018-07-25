@@ -146,25 +146,27 @@ def create1():
     testset = Test.query.filter_by(id=current_user.test_id).first() 
 
     if len(jsonObjectInfo['checkedItems']) == 1:
-        #test = Test(DetectOS=True, NewScan=False )
+        #test = Test(DetectOS=True, NewScan=False)
         testset.DetectOS = True
         testset.NewScan = False
         #db.session.add(test) 
+        db.session.add(testset)
         db.session.commit()
         return jsonify({'Scan_added':True}), 201
     else:
         size = 1
         for i in range(size):
-            ActivatedDet = jsonObjectInfo['checkedItems'][i]
-            ActivatedNew = jsonObjectInfo['checkedItems'][i+1]
-            print(ActivatedDet)
-            print(ActivatedNew)
+            # ActivatedDet = jsonObjectInfo['checkedItems'][i]
+            # ActivatedNew = jsonObjectInfo['checkedItems'][i+1]
+            # print(ActivatedDet)
+            # print(ActivatedNew)
             #Gets the activated test and put it on DB
             # Same as (**{DetectOS:True}, **{NewScan:True} )
             #test = Test(**{ActivatedDet:True}, **{ActivatedNew:True} )
             #db.session.add(test) 
             testset.DetectOS = True 
             testset.NewScan = True
+            db.session.add(testset)
             db.session.commit()
             return jsonify({'Scan_added':True}), 201
 
