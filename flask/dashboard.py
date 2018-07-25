@@ -122,8 +122,8 @@ def machines_del():
 @login_required
 def machines():
 
-    #url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
-    url = 'http://127.0.0.1:5000/api/scans' # Local
+    url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
+    #url = 'http://127.0.0.1:5000/api/scans' # Local
  
     requestpost, json_size = get_scans() 
  

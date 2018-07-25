@@ -17,11 +17,11 @@ with open('api.pem', mode='rb') as idfile:
 
 points = 0
 # Url of the endpoint to post the scans
-# url = 'https://zeus-sec.herokuapp.com/api/scans'
-# url_reload = 'https://zeus-sec.herokuapp.com/reload'
+url = 'https://zeus-sec.herokuapp.com/api/scans'
+url_reload = 'https://zeus-sec.herokuapp.com/reload'
 
-url = 'http://127.0.0.1:5000/api/scans'
-url_reload = 'http://127.0.0.1:5000/reload' 
+#url = 'http://127.0.0.1:5000/api/scans'
+#url_reload = 'http://127.0.0.1:5000/reload' 
 
 machine_id=hex(uuid.getnode()).encode('utf8')
 encrypted = rsa.encrypt(machine_id, pub_key)
@@ -40,8 +40,7 @@ if result_scans["DetectOS:"] == True:
   import DetectOS
   result = DetectOS.OperatingSystem(payload_zeus)
   print(result)
-  if not result["lsass"]:
-    print("entre")
+  
   if result["lsass"] == "Activated":
     points = points + 10
   if result["antivirus"] != None:
@@ -49,7 +48,7 @@ if result_scans["DetectOS:"] == True:
   if result_scans["NewScan:"] == False:
     result["points"] = points
     requestpost = requests.post(url, json=result, headers=headers)
-    print("Done 1st post")
+    print("DetectOS has been executed sucessfully!")
     print(result)
 
 # Scann added
@@ -61,5 +60,5 @@ if result_scans["NewScan:"] == True:
     result1["points"] = points
   print(result1)
   requestpost = requests.post(url , json=result1, headers=headers)
-  print("Done 2nd post")
+  print("The inserted scan has been executed sucessfully!")
 
