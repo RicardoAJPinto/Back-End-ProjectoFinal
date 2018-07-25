@@ -9,12 +9,13 @@ Quick Start
 {% endblock %}
 
 {% block script %} 
-<script> 
-document.addEventListener('DOMContentLoaded', function main(e) {  
+<script>
 
+
+document.addEventListener('DOMContentLoaded', function main(e) {  
+  
   $('#get-checked-data').on('click', function(event) {
       event.preventDefault(); 
-      
       var checkedItems = [], counter=0;
       
       //alert(document.querySelectorAll('input[type="checkbox"]:checked').length);
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function main(e) {
       xhr.send(JSON.stringify({
         checkedItems
       }));
+      div= document.getElementById("alertuser");
+      div.style.display="block"
   });
 });
 </script>
@@ -41,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function main(e) {
 
 {% block content %}
 <style>
+#alertuser{
+  display:none;
+}
 .switch {
     position: relative;
     display: inline-block;
@@ -169,12 +175,18 @@ input:checked + .slider:before {
         Define the agent configuration
         </h5>
         <p>In this step, you will prepare a simple configuration for the agent to be deployed.</p>
+        <p>By default the DetecOS test set is already activated, so if you just want simple 
+          scan on your machine, you are ready to go! </p>
+        <p>DetectOS, gets information about the current machine(Name, version, operating system, 
+          and other details) and detects if the machine is running lsaas(Process that is 
+          responsible for enforcing the security policy in Windows systems) or is running anti-virus
+        </p>
         <hr>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
             <div class="input-group-text">
               <label class="switch">
-                <input type="checkbox" id="Checkbox">
+                <input type="checkbox" id="Checkbox" checked>
                 <span class="slider round"></span>
               </label>
             </div>
@@ -182,7 +194,7 @@ input:checked + .slider:before {
           <input type="text" class="form-control" id="TypeOfTest0" value="DetectOS" readonly> 
         </div>
         <hr>
-        <p>Gets information about the current machine(Name, version, operating system, and other details.) </p>
+        
         
         <p>Here you can activate a new scan added by you! </p>
         <p>But first, check if your scan have this "rules":</p>
@@ -194,6 +206,8 @@ input:checked + .slider:before {
             </ul>
           <li>Return JSON, 
               <a href="https://jsonlint.com/" target="_blank"> validate your JSON here!</a>
+           </li>
+           <li> The object names must be:"TestResult" or "TestResult2"
            </li>
         </ul>
         <p>Here you can upload your script to be runned on your machine</p>
@@ -217,12 +231,18 @@ input:checked + .slider:before {
         </div>
         <hr>
         
-        <button class="btn btn-primary col-xs-12" id="get-checked-data">
+        <button class="btn btn-primary col-xs-12" id="get-checked-data" >
           Activate the agent configuration
         </button>
         <hr>
 
-        <button type="button" class="btn btn-outline-success btn-lg btn-block" onclick="$('#nav-download-tab').click();" >
+        <div id="alertuser">
+          <div class="alert alert-success" role="alert" >
+            <strong>Well done!</strong> You successfully activated the agent configuration.
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-outline-success btn-lg btn-block"  onclick="$('#nav-download-tab').click();" >
             Next
         </button>
       </li>  

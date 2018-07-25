@@ -122,12 +122,10 @@ def machines_del():
 @login_required
 def machines():
 
-    url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
-    #url = 'http://127.0.0.1:5000/api/scans' # Local
-    #insertAPIkey = str(current_user.api_key)
-    #headers= { "x-api-key": insertAPIkey} 
+    #url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
+    url = 'http://127.0.0.1:5000/api/scans' # Local
  
-    requestpost, json_size = get_scans() #requests.get(url).json(), headers=headers
+    requestpost, json_size = get_scans() 
  
     return render_template('dashboard/HistoryMachines.html', APIcall=requestpost, json_size=json_size)
      

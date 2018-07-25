@@ -155,6 +155,20 @@ document.addEventListener('DOMContentLoaded', function main(e) {
                 {{ APIcall[i]["points"] }}
               </a>
             {% endif %} 
+
+            {% if (APIcall[i]["testone"] != null) %}
+              <a class="list-group-item list-group-item-action"> 
+                Test Result One:
+                {{ APIcall[i]["testone"] }}
+              </a>
+            {% endif %} 
+
+            {% if (APIcall[i]["testtwo"] != null) %}
+              <a class="list-group-item list-group-item-action"> 
+                Test Result two:
+                {{ APIcall[i]["testtwo"] }}
+              </a>
+            {% endif %} 
         </div>
       </div>
       {% endfor %}
