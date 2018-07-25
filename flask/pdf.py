@@ -40,6 +40,8 @@ def generate_pdf(historic):
             CompanyName= 'IPT',
             Node= hist.dataos['node'],
             Version= hist.dataos['version'],
+            Windows= hist.dataos['lsass'],
+            AV= hist.dataos['eset'],
             Processor= hist.dataos['processor'],
             SO= hist.dataos['system'],
             ClientName= '_________________',
