@@ -1,7 +1,7 @@
+[![Build Status](https://travis-ci.org/RicardoAJPinto/Back-End-ProjectoFinal.svg?branch=master)](https://travis-ci.org/RicardoAJPinto/Back-End-ProjectoFinal)
 [![Known Vulnerabilities](https://snyk.io/test/github/RicardoAJPinto/Back-End-ProjectoFinal/badge.svg)](https://snyk.io/test/github/RicardoAJPinto/Back-End-ProjectoFinal)
 [![Heroku](https://heroku-badge.herokuapp.com/?app=zeus-sec)](http://zeus-sec.herokuapp.com)
 
-![Imgur](https://i.imgur.com/4gRpnuO.png)
 Zeus - Agent Based Vulnerability Assessment
 ===========
 ![logo do ipt](http://portal2.ipt.pt/img/logo.png "Instituto Politécnico de Tomar")
