@@ -36,8 +36,8 @@ vagrant up
 # 6. SSH into the VM
 vagrant ssh
 # The /vagrant folder is shared between host and guest VM and contains the project files
-# 7. Go to /vagrant folder
-cd /vagrant
+# 7. Go to /vagrant/flask folder where makefile is located
+cd /vagrant/flask
 # 8. Start the virtual environment using Pipenv
 pipenv shell
 # 9. Start the server with one of the following

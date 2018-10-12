@@ -21,7 +21,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     export HOME=/home/vagrant
-
     sudo apt-get update -yq
     sudo apt-get install -yq ntp
     sudo apt-get install -yq git
@@ -39,24 +38,24 @@ Vagrant.configure("2") do |config|
     # install pip for python3.6
     su vagrant -c 'curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py'
     sudo python3.6 get-pip.py
+    sudo -H pip install pip==18.0 # Avoided issue, problems with 18.1 version
 
     # nota: talvez tenha que mudar os nomes ao python, python3.5 e python3.6
-
     # install Pipenv (needed for Heroku, high-level virtualenv, ala Bundler)
     # su vagrant -c 'pip3 install --user pipenv'
-    sudo pip3 install pipenv # install system wide
-
+    sudo pip install pipenv # install system wide
+    
     # install postgres 
     sudo apt-get install -yq postgresql
     sudo apt-get install -yq libpq-dev
-
+    
     # install graphviz for ER diagrams
     sudo apt-get install -yq graphviz libgraphviz-dev graphviz-dev pkg-config
     
     # install all the python modules in the virtual env,
     # activate the venv, create DB, USER, etc
     # create all the DB tables
-    cd /vagrant
+    cd /vagrant/flask
     sudo -u vagrant -- bash -c 'pipenv install --dev'
     sudo -u vagrant -- bash -c 'make db/create'
     sudo -u vagrant -- bash -c 'pipenv run make db/create/tables'
@@ -66,7 +65,6 @@ Vagrant.configure("2") do |config|
     #              pipenv shell &&
     #               make db/create &&
     #               make db/create/tables'
-
   SHELL
 
   # The most common configuration options are documented and commented below.

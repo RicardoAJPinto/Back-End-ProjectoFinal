@@ -42,14 +42,13 @@ class Test(db.Model, RoleMixin):
     NewScan = db.Column(db.Boolean(), nullable=False)
     history = db.relationship('Historic', backref='TestHist')
     user = db.relationship('User', backref='test')
-
+    
 class Historic(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     machine_id = db.Column(db.Integer, db.ForeignKey('machine.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
     dataos = db.Column(JSONType)
-    
 
 class Machine(db.Model, UserMixin): 
     id = db.Column(db.Integer, primary_key=True)

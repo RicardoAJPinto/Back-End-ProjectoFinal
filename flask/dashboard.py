@@ -122,8 +122,8 @@ def machines_del():
 @login_required
 def machines():
 
-    url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
-    #url = 'http://127.0.0.1:5000/api/scans' # Local
+    #url = 'https://zeus-sec.herokuapp.com/api/scans' # Heroku
+    url = 'http://127.0.0.1:5000/api/scans' # Local
  
     requestpost, json_size = get_scans() 
  
@@ -183,11 +183,7 @@ def reload_agent():
     message_id = base64.b64decode(usernode)
     user_id = rsa.decrypt(message_id, priv_key)
     message_user = user_id.decode('utf8')
- 
-    user = User.query.filter_by(api_key=message_user).first()
-    # if not user:
-    #     abort(400)
-    #test = Test.query.filter_by(id=user.test_id).first()
+
     test = Test.query.filter_by(id=Test.id).first()
     payload2 = {}
     payload2["DetectOS:"] = test.DetectOS

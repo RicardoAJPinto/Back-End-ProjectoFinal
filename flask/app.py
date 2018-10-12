@@ -2,7 +2,7 @@ import os
 import sys
 import datetime
 import json
-from flask_wtf.csrf import CSRFProtect
+#from flask_wtf.csrf import CSRFProtect
 from functools import wraps
 from flask import (Flask, render_template, request, redirect, url_for, 
                     jsonify, make_response, Blueprint)

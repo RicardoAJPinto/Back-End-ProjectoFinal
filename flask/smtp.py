@@ -1,12 +1,15 @@
 from views import *
+
+################################ Confirm email #################################
+
 ################################ Reset Password #################################
+# View + Form(email) to reset password
 @app.route('/reset_password', methods=['GET', 'POST'])
 def resetpwd():
     form = RequestResetForm()
     return render_template('resetpassword.html', form=form)
 
-
-# Reset password (POSTTTTTT)
+# Submited the email to reset the password
 @app.route('/reseted', methods=['POST'])
 def reseted():
     email = request.form.get('email')
@@ -25,7 +28,7 @@ def reseted():
         
     return render_template('resetpassword.html', form=RequestResetForm(), message=flash('You have received an email to reset your password!', 'success'))
  
-
+# Form to type new password to save(Link received from email to change password) 
 @app.route('/confirm_email/<token>', methods=["GET", "POST"])
 def reset_with_token(token):
     try:
@@ -49,7 +52,8 @@ def reset_with_token(token):
  
     return render_template('newpassword.html', form=form, token=token)
 
-# After the email has been sended
+# **************Not used????**************
+#  After the email has been sended
 @app.route('/new_password/<token>', methods=['GET', 'POST'])
 def newpwd(token):
     form = ResetPasswordForm()
