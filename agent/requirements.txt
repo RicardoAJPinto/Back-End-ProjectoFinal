@@ -1,4 +1,4 @@
 schedule==0.5.0
 rsa==3.4.2
 requests==2.18.4
-psutil==5.4.6
+psutil==5.6.6
